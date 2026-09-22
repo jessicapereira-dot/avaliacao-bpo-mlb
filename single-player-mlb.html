@@ -230,8 +230,6 @@
 const CONFIG = {
   avaliacaoNome: "Single Player - MLB",
 
-  // TODO: depois de criar o Google Form, cole aqui a URL de envio
-  // (formato: https://docs.google.com/forms/d/e/XXXXXXXXXXXX/formResponse)
   formActionUrl: "https://docs.google.com/forms/u/0/d/e/1FAIpQLSfPhCyKWzRRf1PxE-MO6qxmv436UxZfBAmVe7WY0tmY0_YCGg/formResponse",
 
   formEntries: {
@@ -401,6 +399,7 @@ const CONFIG = {
     "correct": 2
   }
 ]
+};
 
 /* =========================================================
    ESTADO
@@ -624,7 +623,7 @@ document.getElementById('editorBtn').addEventListener('click', () => {
 
 document.getElementById('btnExport').addEventListener('click', () => {
   saveEdits();
-  document.getElementById('exportText').value = 'questions: ' + JSON.stringify(CONFIG.questions, null, 2);
+  document.getElementById('exportText').value = 'questions: ' + JSON.stringify(CONFIG.questions, null, 2) + '\n};';
   document.getElementById('exportModal').style.display = 'flex';
 });
 
