@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avaliação - Refunds Cartão de Crédito/Débito</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root{
+    --blue:#009EE3; --blue-dark:#007BB5; --blue-light:#E8F7FD; --navy:#003D5C;
+    --green:#00A650; --green-bg:#E6F7EF;
+    --red:#F23D4F; --red-bg:#FDEEF0;
+    --yellow:#F59E0B; --yellow-bg:#FFF8E1;
+    --bg:#F0F9FF; --text:#1A1A2E; --text2:#6B7280; --border:#E0E7EF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding-top:88px;
+    min-height:100vh;
+  }
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    height:72px;
+    background:linear-gradient(135deg,var(--blue) 0%,var(--navy) 100%);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 24px;
+    box-shadow:0 2px 12px rgba(0,61,92,.25);
+  }
+  .header-left{display:flex; align-items:center; gap:14px;}
+  .logo-circle{
+    width:44px; height:44px; border-radius:50%;
+    background:#fff; display:flex; align-items:center; justify-content:center;
+    font-size:22px; flex-shrink:0;
+  }
+  .header-titles h1{color:#fff; font-size:16px; font-weight:700; line-height:1.2;}
+  .header-titles p{color:#DCEFFB; font-size:12px; font-weight:500;}
+  #editorBtn{
+    background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.35);
+    padding:8px 14px; border-radius:10px; font-family:'Inter',sans-serif; font-size:13px;
+    font-weight:600; cursor:pointer; white-space:nowrap;
+  }
+  #editorBtn:hover{background:rgba(255,255,255,.25);}
+
+  .wrap{max-width:860px; margin:0 auto; padding:32px 20px 60px;}
+
+  .card{
+    background:#fff; border-radius:14px;
+    box-shadow:0 4px 24px rgba(0,158,227,.10);
+    padding:36px 32px;
+  }
+
+  #screenId .card{max-width:480px; margin:40px auto 0;}
+  #screenId h2{font-size:22px; margin-bottom:6px;}
+  #screenId p{color:var(--text2); font-size:14px; margin-bottom:24px;}
+  .field{margin-bottom:18px;}
+  .field label{display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:var(--text);}
+  .field input{
+    width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:10px;
+    font-family:'Inter',sans-serif; font-size:14px; background:#F9FBFC;
+  }
+  .field input:focus{outline:none; border-color:var(--blue); background:#fff;}
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    background:var(--blue); color:#fff; border:none; padding:13px 26px;
+    border-radius:10px; font-family:'Inter',sans-serif; font-size:15px; font-weight:700;
+    cursor:pointer; width:100%; transition:background .15s;
+  }
+  .btn:hover{background:var(--blue-dark);}
+  .btn:disabled{background:#B9C4CC; cursor:not-allowed;}
+  .btn-outline{
+    background:#fff; color:var(--blue); border:1.5px solid var(--blue);
+  }
+  .btn-outline:hover{background:var(--blue-light);}
+
+  #screenQuiz{display:none;}
+  .progress-bar{
+    height:8px; background:var(--border); border-radius:6px; overflow:hidden; margin-bottom:22px;
+  }
+  .progress-fill{height:100%; background:var(--blue); border-radius:6px; transition:width .3s;}
+  .q-meta{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .q-meta span{font-size:13px; font-weight:600; color:var(--text2);}
+  .q-title{font-size:18px; font-weight:700; margin-bottom:22px; line-height:1.4;}
+
+  .option{
+    background:#F5F5F5; border:1.5px solid transparent; border-radius:12px;
+    padding:14px 16px; margin-bottom:12px; cursor:pointer;
+    font-size:14.5px; font-weight:500; transition:.15s;
+    display:flex; align-items:center; gap:12px;
+  }
+  .option:hover{background:#EFEFEF;}
+  .option.selected{background:var(--blue-light); border-color:var(--blue); font-weight:600;}
+  .option .dot{
+    width:18px; height:18px; border-radius:50%; border:2px solid #C7CDD3; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .option.selected .dot{border-color:var(--blue); background:var(--blue);}
+  .option.selected .dot::after{content:''; width:8px; height:8px; border-radius:50%; background:#fff;}
+
+  .quiz-actions{display:flex; justify-content:flex-end; margin-top:28px;}
+  .quiz-actions .btn{width:auto; padding:13px 30px;}
+
+  #screenResult{display:none;}
+  #screenResult .card{text-align:center;}
+  .score-badge{
+    width:120px; height:120px; border-radius:50%; margin:0 auto 20px;
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    font-weight:800;
+  }
+  .score-badge .num{font-size:34px; line-height:1;}
+  .score-badge .den{font-size:13px; opacity:.8;}
+  .result-label{
+    display:inline-block; padding:8px 18px; border-radius:20px; font-weight:700; font-size:14px;
+    margin-bottom:22px;
+  }
+  .stats{display:flex; justify-content:center; gap:28px; margin:22px 0 30px; flex-wrap:wrap;}
+  .stat{text-align:center;}
+  .stat .n{font-size:24px; font-weight:800;}
+  .stat .l{font-size:12px; color:var(--text2); font-weight:600; text-transform:uppercase; letter-spacing:.03em;}
+  #screenResult .btn{max-width:280px; margin:0 auto;}
+
+  .editable{outline:1px dashed var(--blue); outline-offset:2px; border-radius:4px; cursor:text;}
+  #editorBar{
+    display:none; background:var(--yellow-bg); border:1px solid var(--yellow);
+    color:#7A5200; padding:10px 16px; border-radius:10px; font-size:13px; font-weight:600;
+    margin-bottom:18px; text-align:center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="logo-circle">↩️</div>
+    <div class="header-titles">
+      <h1>Avaliação - Refunds Cartão de Crédito/Débito</h1>
+      <p>MLB · FOS MP Operações</p>
+    </div>
+  </div>
+  <button id="editorBtn">⚙️ Modo Editor</button>
+</header>
+
+<div id="screenId" class="wrap">
+  <div class="card">
+    <h2>Antes de começar</h2>
+    <p>Preencha seus dados para iniciarmos a avaliação.</p>
+    <div class="field">
+      <label for="inpNome">Nome completo</label>
+      <input type="text" id="inpNome" placeholder="Digite seu nome">
+    </div>
+    <div class="field">
+      <label for="inpEmail">E-mail</label>
+      <input type="email" id="inpEmail" placeholder="seuemail@empresa.com">
+    </div>
+    <button class="btn" id="btnStart">Iniciar Avaliação →</button>
+  </div>
+</div>
+
+<div id="screenQuiz" class="wrap">
+  <div id="editorBar">Modo Editor ativo — clique em uma pergunta ou opção para editar o texto.</div>
+  <div class="card">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="q-meta">
+      <span id="qCounter">Pergunta 1 de 15</span>
+    </div>
+    <div class="q-title" id="qTitle"></div>
+    <div id="qOptions"></div>
+    <div class="quiz-actions">
+      <button class="btn" id="btnNext" disabled>Próximo →</button>
+    </div>
+  </div>
+</div>
+
+<div id="screenResult" class="wrap">
+  <div class="card">
+    <div class="score-badge" id="scoreBadge">
+      <div class="num" id="scoreNum">0.0</div>
+      <div class="den">/ 10</div>
+    </div>
+    <div class="result-label" id="resultLabel">—</div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="statCorrect" style="color:var(--green)">0</div><div class="l">Corretas</div></div>
+      <div class="stat"><div class="n" id="statIncorrect" style="color:var(--red)">0</div><div class="l">Incorretas</div></div>
+      <div class="stat"><div class="n" id="statTotal">0</div><div class="l">Total</div></div>
+    </div>
+    <a href="index.html" class="btn btn-outline" style="text-decoration:none; display:inline-flex;">🏠 Voltar ao início</a>
+  </div>
+</div>
+
+<script>
+const CONFIG = {
+  avaliacaoNome: "Refunds Cartão de Crédito/Débito - MLB",
+
+  formActionUrl: "https://docs.google.com/forms/u/0/d/e/1FAIpQLSfPhCyKWzRRf1PxE-MO6qxmv436UxZfBAmVe7WY0tmY0_YCGg/formResponse",
+
+  formEntries: {
+    dataHora:            "entry.2017782703",
+    avaliacao:           "entry.78177913",
+    nome:                "entry.1818530692",
+    email:               "entry.1056222960",
+    nota:                "entry.48293095",
+    resultado:           "entry.381965002",
+    corretas:            "entry.144582871",
+    incorretas:          "entry.1335730000",
+    total:               "entry.891321817",
+    respostasDetalhadas: "entry.407031098"
+  },
+
+  editorPin: "1234",
+
+  questions: [
+    {
+      q: "O que é um 'Refund' no contexto deste manual?",
+      options: [
+        "Um reembolso gerado quando há necessidade de cancelamento (total ou parcial) de um pagamento feito com cartão de crédito/débito",
+        "Um tipo de cartão exclusivo para vendedores",
+        "Um bônus aplicado automaticamente na conta do usuário",
+        "Um relatório mensal de vendas"
+      ],
+      correct: 0
+    },
+    {
+      q: "Qual a diferença entre processamento Online e Offline de um Refund?",
+      options: [
+        "Online é sempre mais lento que Offline",
+        "Online é automático, gerado no momento da solicitação e viaja pelo Gateway até a Processadora; Offline é manual, tratado pela equipe de Refunds via e-mail ou portais",
+        "Offline só existe para cartões de débito",
+        "Não há diferença prática entre os dois"
+      ],
+      correct: 1
+    },
+    {
+      q: "A partir de qual evento deve ser contado o prazo do processo de Refund?",
+      options: [
+        "Data da compra original",
+        "Data do primeiro contato do usuário",
+        "Data da criação do Refund (One Source > Refunds > Refunds Gateway)",
+        "Data de fechamento da fatura"
+      ],
+      correct: 2
+    },
+    {
+      q: "No dicionário de status de Pagamento, o que ocorre com o status 'Pending in process' após 72 horas?",
+      options: [
+        "Passa a ser responsabilidade da equipe de GIN",
+        "O pagamento é cancelado automaticamente",
+        "O usuário recebe o reembolso automaticamente",
+        "O caso é encerrado sem solução"
+      ],
+      correct: 0
+    },
+    {
+      q: "No dicionário de status de Devolução, o que caracteriza o status 'Contingency'?",
+      options: [
+        "A devolução foi enviada com sucesso",
+        "Foi recebida uma resposta da Processadora com erro, e a equipe de Refunds deve analisar o pagamento e mudar o status",
+        "O usuário já visualizou o estorno na fatura",
+        "O reembolso foi cancelado definitivamente"
+      ],
+      correct: 1
+    },
+    {
+      q: "No Mapa de Estados, o que significa o estado 'Compensated'?",
+      options: [
+        "A devolução foi processada com êxito e aparece na fatura do usuário",
+        "É uma anulação no mesmo dia; a compra e a devolução foram geradas no mesmo lote, não gerando movimentos no cartão",
+        "O pagamento está fora do prazo e pendente de verificação",
+        "O dinheiro foi devolvido como entrada em conta (regalo)"
+      ],
+      correct: 1
+    },
+    {
+      q: "O que significa o estado 'Refund account money'?",
+      options: [
+        "A devolução foi processada com êxito e aparece na fatura",
+        "A devolução ainda está dentro do prazo, sem necessidade de ação",
+        "A devolução não pôde ser feita pela administradora do cartão, então é feita a entrada de dinheiro ao comprador (aplicar Regalo)",
+        "A devolução foi rejeitada permanentemente"
+      ],
+      correct: 2
+    },
+    {
+      q: "Segundo o fluxo, se o status do Refund está como 'Reconciled', qual é a ação correta?",
+      options: [
+        "Derivar automaticamente para Terceros sem análise",
+        "Informar ao usuário a data de débito e enviar a carta de cancelamento",
+        "Aplicar regalo imediatamente, sem outras verificações",
+        "Aguardar mais 90 dias antes de qualquer ação"
+      ],
+      correct: 1
+    },
+    {
+      q: "Para casos de débito Mastercard Stone com mais de 7 dias da venda, qual é a ação correta?",
+      options: [
+        "Aguardar indefinidamente a resposta da Stone",
+        "Aplicar o regalo diretamente, pois é regra de negócio do adquirente (eles não cancelam vendas débito Mastercard após 7 dias)",
+        "Recusar o pedido do usuário",
+        "Encaminhar para o time de Mediações"
+      ],
+      correct: 1
+    },
+    {
+      q: "Antes de aplicar regalo em conta, o que deve ser validado obrigatoriamente?",
+      options: [
+        "Se o usuário já fez outras compras recentemente",
+        "Se o Payer possui conta no Mercado Pago; caso não possua, deve-se questionar se é possível devolver ao Seller",
+        "Se o produto foi entregue corretamente",
+        "Se o Seller concorda em aceitar novos pedidos"
+      ],
+      correct: 1
+    },
+    {
+      q: "Se já foi aplicado um cashback PARCIAL ao pagamento, qual é a regra de devolução?",
+      options: [
+        "Não fazer nenhuma devolução, pois já houve aplicação de dinheiro em conta",
+        "Fazer a devolução apenas do valor de diferença",
+        "Fazer a devolução do valor total novamente",
+        "Cancelar o cashback já aplicado"
+      ],
+      correct: 1
+    },
+    {
+      q: "Para preencher o JIRA GCO (Genova não entra nesse fluxo), qual é a informação sempre preenchida como 'Site'?",
+      options: [
+        "Varia conforme o país do usuário",
+        "BR",
+        "MLB",
+        "Depende do adquirente"
+      ],
+      correct: 2
+    },
+    {
+      q: "Quais são os possíveis status de retorno na planilha do Forms de Refunds (para controle Terceros)?",
+      options: [
+        "Apenas 'Aprovado' ou 'Recusado'",
+        "Cancelamento Efetuado, Em verificação com adquirente, Cancelamento não efetuado/Prazo Superior, Aplicar dinheiro em conta e Chargeback",
+        "Somente 'Pendente' e 'Concluído'",
+        "Apenas o valor do reembolso"
+      ],
+      correct: 1
+    },
+    {
+      q: "Qual é a função da ferramenta Equals mencionada no manual?",
+      options: [
+        "Um conciliador que reúne todas as informações conciliadas do pagamento do lado do Mercado Pago e do Adquirente",
+        "Uma ferramenta exclusiva para atendimento ao cliente",
+        "Um sistema de emissão de boletos",
+        "Um portal de aprovação de regalos"
+      ],
+      correct: 0
+    },
+    {
+      q: "Em casos de Refund fora do prazo, sem conciliação no Equals e Simetrik, para qual adquirente é possível buscar a carta de cancelamento diretamente por um portal próprio?",
+      options: [
+        "Cielo",
+        "Rede",
+        "Getnet",
+        "Stone"
+      ],
+      correct: 2
+    }
+  ]
+};
+
+let currentQ = 0;
+let selectedOption = null;
+const answers = new Array(CONFIG.questions.length).fill(null);
+let editorMode = false;
+
+document.getElementById('btnStart').addEventListener('click', () => {
+  const nome = document.getElementById('inpNome').value.trim();
+  const email = document.getElementById('inpEmail').value.trim();
+  if(!nome || !email){
+    alert('Por favor, preencha nome e e-mail para continuar.');
+    return;
+  }
+  document.getElementById('screenId').style.display = 'none';
+  document.getElementById('screenQuiz').style.display = 'block';
+  renderQuestion();
+});
+
+function renderQuestion(){
+  const total = CONFIG.questions.length;
+  const q = CONFIG.questions[currentQ];
+
+  document.getElementById('progressFill').style.width = ((currentQ)/total*100) + '%';
+  document.getElementById('qCounter').textContent = `Pergunta ${currentQ+1} de ${total}`;
+  document.getElementById('qTitle').textContent = q.q;
+  if(editorMode) document.getElementById('qTitle').classList.add('editable');
+
+  const optsDiv = document.getElementById('qOptions');
+  optsDiv.innerHTML = '';
+  selectedOption = null;
+
+  q.options.forEach((optText, idx) => {
+    const el = document.createElement('div');
+    el.className = 'option';
+    el.innerHTML = `<div class="dot"></div><div class="opt-text${editorMode ? ' editable' : ''}">${optText}</div>`;
+    el.addEventListener('click', (e) => {
+      if(editorMode && e.target.classList.contains('opt-text')) return;
+      document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedOption = idx;
+      document.getElementById('btnNext').disabled = false;
+    });
+    optsDiv.appendChild(el);
+  });
+
+  document.getElementById('btnNext').disabled = true;
+  document.getElementById('btnNext').textContent = (currentQ === total - 1) ? 'Finalizar →' : 'Próximo →';
+}
+
+document.getElementById('btnNext').addEventListener('click', () => {
+  if(selectedOption === null) return;
+  answers[currentQ] = selectedOption;
+
+  if(currentQ < CONFIG.questions.length - 1){
+    currentQ++;
+    renderQuestion();
+  } else {
+    finishQuiz();
+  }
+});
+
+function finishQuiz(){
+  const total = CONFIG.questions.length;
+  let corretas = 0;
+  const detalhes = [];
+
+  CONFIG.questions.forEach((q, i) => {
+    const acertou = answers[i] === q.correct;
+    if(acertou) corretas++;
+    detalhes.push(`P${i+1}: ${acertou ? 'Correta' : 'Incorreta'}`);
+  });
+
+  const incorretas = total - corretas;
+  const nota = (corretas / total * 10);
+  const notaFmt = nota.toFixed(1);
+
+  let resultado, color, bg;
+  if(nota < 7.0){ resultado = 'Reforço/Nivelamento'; color = 'var(--red)'; bg = 'var(--red-bg)'; }
+  else if(nota === 7.0){ resultado = 'Em Aprendizado'; color = 'var(--yellow)'; bg = 'var(--yellow-bg)'; }
+  else { resultado = 'Aprendizado Superado'; color = 'var(--green)'; bg = 'var(--green-bg)'; }
+
+  document.getElementById('screenQuiz').style.display = 'none';
+  document.getElementById('screenResult').style.display = 'block';
+
+  document.getElementById('scoreBadge').style.background = bg;
+  document.getElementById('scoreBadge').style.color = color;
+  document.getElementById('scoreNum').textContent = notaFmt;
+  const lbl = document.getElementById('resultLabel');
+  lbl.textContent = resultado;
+  lbl.style.background = bg;
+  lbl.style.color = color;
+  document.getElementById('statCorrect').textContent = corretas;
+  document.getElementById('statIncorrect').textContent = incorretas;
+  document.getElementById('statTotal').textContent = total;
+
+  enviarResposta({
+    nome: document.getElementById('inpNome').value.trim(),
+    email: document.getElementById('inpEmail').value.trim(),
+    nota: notaFmt,
+    resultado,
+    corretas,
+    incorretas,
+    total,
+    detalhes: detalhes.join(' | ')
+  });
+}
+
+function enviarResposta(dados){
+  const fd = new FormData();
+  fd.append(CONFIG.formEntries.dataHora, new Date().toLocaleString('pt-BR'));
+  fd.append(CONFIG.formEntries.avaliacao, CONFIG.avaliacaoNome);
+  fd.append(CONFIG.formEntries.nome, dados.nome);
+  fd.append(CONFIG.formEntries.email, dados.email);
+  fd.append(CONFIG.formEntries.nota, dados.nota);
+  fd.append(CONFIG.formEntries.resultado, dados.resultado);
+  fd.append(CONFIG.formEntries.corretas, dados.corretas);
+  fd.append(CONFIG.formEntries.incorretas, dados.incorretas);
+  fd.append(CONFIG.formEntries.total, dados.total);
+  fd.append(CONFIG.formEntries.respostasDetalhadas, dados.detalhes);
+
+  fetch(CONFIG.formActionUrl, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: fd
+  }).catch(() => { /* no-cors não permite ler o resultado */ });
+}
+
+document.getElementById('editorBtn').addEventListener('click', () => {
+  if(!editorMode){
+    const pin = prompt('Digite o PIN do Modo Editor:');
+    if(pin !== CONFIG.editorPin){
+      if(pin !== null) alert('PIN incorreto.');
+      return;
+    }
+  }
+  editorMode = !editorMode;
+  document.getElementById('editorBar').style.display = editorMode ? 'block' : 'none';
+
+  if(document.getElementById('screenQuiz').style.display === 'block'){
+    renderQuestion();
+  }
+
+  if(editorMode){
+    document.querySelectorAll('.editable').forEach(el => el.contentEditable = 'true');
+    document.getElementById('qTitle').addEventListener('blur', saveEdits);
+    document.querySelectorAll('.opt-text').forEach(el => el.addEventListener('blur', saveEdits));
+  }
+});
+
+function saveEdits(){
+  const q = CONFIG.questions[currentQ];
+  q.q = document.getElementById('qTitle').textContent.trim();
+  document.querySelectorAll('.opt-text').forEach((el, idx) => {
+    q.options[idx] = el.textContent.trim();
+  });
+}
+</script>
+
+</body>
+</html>
