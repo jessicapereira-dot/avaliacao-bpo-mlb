@@ -1,553 +1,841 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Avaliação - Single Player MLB</title>
+<title>Evaluación · Single Player HSP · Mercado Pago</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --mp:#009EE3;--mp-dark:#007BB5;--mp-light:#E8F7FD;--navy:#003D5C;
+  --ok:#00A650;--ok-bg:#E6F7EF;--err:#F23D4F;--err-bg:#FDEEF0;
+  --warn:#F59E0B;--warn-bg:#FFF8E1;
+  --bg:#F0F9FF;--white:#fff;--border:#E0E7EF;--muted:#6B7280;--text:#1A1A2E;
+  --radius:14px;--shadow:0 4px 24px rgba(0,158,227,.10);
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);padding-bottom:60px}
 
-  :root{
-    --blue:#009EE3; --blue-dark:#007BB5; --blue-light:#E8F7FD; --navy:#003D5C;
-    --green:#00A650; --green-bg:#E6F7EF;
-    --red:#F23D4F; --red-bg:#FDEEF0;
-    --yellow:#F59E0B; --yellow-bg:#FFF8E1;
-    --bg:#F0F9FF; --text:#1A1A2E; --text2:#6B7280; --border:#E0E7EF;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{
-    font-family:'Inter',sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    padding-top:88px;
-    min-height:100vh;
-  }
-  header{
-    position:fixed; top:0; left:0; right:0; z-index:100;
-    height:72px;
-    background:linear-gradient(135deg,var(--blue) 0%,var(--navy) 100%);
-    display:flex; align-items:center; justify-content:space-between;
-    padding:0 24px;
-    box-shadow:0 2px 12px rgba(0,61,92,.25);
-  }
-  .header-left{display:flex; align-items:center; gap:14px;}
-  .logo-circle{
-    width:44px; height:44px; border-radius:50%;
-    background:#fff; display:flex; align-items:center; justify-content:center;
-    font-size:22px; flex-shrink:0;
-  }
-  .header-titles h1{color:#fff; font-size:16px; font-weight:700; line-height:1.2;}
-  .header-titles p{color:#DCEFFB; font-size:12px; font-weight:500;}
-  #editorBtn{
-    background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.35);
-    padding:8px 14px; border-radius:10px; font-family:'Inter',sans-serif; font-size:13px;
-    font-weight:600; cursor:pointer; white-space:nowrap;
-  }
-  #editorBtn:hover{background:rgba(255,255,255,.25);}
+/* HEADER */
+.hdr{background:linear-gradient(135deg,var(--mp) 0%,var(--navy) 100%);padding:28px 40px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 4px 20px rgba(0,61,92,.25)}
+.hdr-left{display:flex;align-items:center;gap:18px}
+.hdr-logo{width:52px;height:52px;background:var(--white);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.hdr h1{color:#fff;font-size:1.4rem;font-weight:800;letter-spacing:-.5px}
+.hdr p{color:rgba(255,255,255,.78);font-size:.83rem;margin-top:3px;font-weight:500}
+.btn-editor{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.35);color:#fff;padding:9px 18px;border-radius:9px;cursor:pointer;font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:7px;transition:background .18s;white-space:nowrap;flex-shrink:0}
+.btn-editor:hover{background:rgba(255,255,255,.25)}
 
-  .wrap{max-width:860px; margin:0 auto; padding:32px 20px 60px;}
+/* WRAP */
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
 
-  .card{
-    background:#fff; border-radius:14px;
-    box-shadow:0 4px 24px rgba(0,158,227,.10);
-    padding:36px 32px;
-  }
+/* ── TELA DE IDENTIFICAÇÃO ── */
+.id-screen{background:var(--white);border-radius:var(--radius);padding:40px 36px;margin:36px 0 0;box-shadow:var(--shadow);border:1.5px solid var(--border);text-align:center}
+.id-icon{font-size:3rem;margin-bottom:12px}
+.id-screen h2{font-size:1.25rem;font-weight:800;color:var(--navy);margin-bottom:6px}
+.id-screen p{font-size:.88rem;color:var(--muted);margin-bottom:28px;line-height:1.6;max-width:420px;margin-left:auto;margin-right:auto}
+.id-form{display:flex;flex-direction:column;gap:14px;max-width:400px;margin:0 auto}
+.id-field{display:flex;flex-direction:column;gap:5px;text-align:left}
+.id-label{font-size:.8rem;font-weight:700;color:var(--text)}
+.id-input{padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.92rem;font-family:inherit;color:var(--text);outline:none;transition:border-color .18s;background:#fff}
+.id-input:focus{border-color:var(--mp);box-shadow:0 0 0 3px rgba(0,158,227,.12)}
+.id-input.err-field{border-color:var(--err)}
+.id-err{color:var(--err);font-size:.78rem;font-weight:600;min-height:18px}
+.btn-start{width:100%;padding:13px;border-radius:10px;background:linear-gradient(135deg,var(--mp),var(--mp-dark));color:#fff;border:none;cursor:pointer;font-size:.95rem;font-weight:700;margin-top:6px;transition:opacity .18s,transform .12s;box-shadow:0 4px 14px rgba(0,158,227,.3)}
+.btn-home{display:inline-block;margin-top:22px;padding:12px 30px;border-radius:10px;border:2px solid var(--mp);color:var(--mp-dark);background:#fff;font-weight:700;font-size:.9rem;text-decoration:none;transition:background .18s}
+.btn-home:hover{background:var(--mp-light)}
+.btn-start:hover{opacity:.92;transform:translateY(-1px)}
+.id-note{font-size:.75rem;color:var(--muted);margin-top:12px;display:flex;align-items:center;justify-content:center;gap:5px}
 
-  /* Tela de identificação */
-  #screenId .card{max-width:480px; margin:40px auto 0;}
-  #screenId h2{font-size:22px; margin-bottom:6px;}
-  #screenId p{color:var(--text2); font-size:14px; margin-bottom:24px;}
-  .field{margin-bottom:18px;}
-  .field label{display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:var(--text);}
-  .field input{
-    width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:10px;
-    font-family:'Inter',sans-serif; font-size:14px; background:#F9FBFC;
-  }
-  .field input:focus{outline:none; border-color:var(--blue); background:#fff;}
+/* INTRO */
+.intro{background:var(--white);border-radius:var(--radius);padding:24px 28px;margin:20px 0 0;box-shadow:var(--shadow);border-left:5px solid var(--mp)}
+.intro h2{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:8px}
+.intro p{font-size:.88rem;color:var(--muted);line-height:1.7}
+.badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.badge{padding:5px 12px;border-radius:20px;font-size:.76rem;font-weight:600}
+.b-red{background:var(--err-bg);color:var(--err);border:1.5px solid #F23D4F33}
+.b-amb{background:var(--warn-bg);color:#B45309;border:1.5px solid #F59E0B44}
+.b-grn{background:var(--ok-bg);color:var(--ok);border:1.5px solid #00A65033}
 
-  .btn{
-    display:inline-flex; align-items:center; justify-content:center; gap:8px;
-    background:var(--blue); color:#fff; border:none; padding:13px 26px;
-    border-radius:10px; font-family:'Inter',sans-serif; font-size:15px; font-weight:700;
-    cursor:pointer; width:100%; transition:background .15s;
-  }
-  .btn:hover{background:var(--blue-dark);}
-  .btn:disabled{background:#B9C4CC; cursor:not-allowed;}
-  .btn-outline{
-    background:#fff; color:var(--blue); border:1.5px solid var(--blue);
-  }
-  .btn-outline:hover{background:var(--blue-light);}
+/* PROGRESS */
+.prog-wrap{background:var(--white);border-radius:var(--radius);padding:18px 24px;margin:20px 0 0;box-shadow:var(--shadow);border:1.5px solid var(--border)}
+.prog-labels{display:flex;justify-content:space-between;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:8px}
+.prog-bg{background:var(--border);border-radius:99px;height:9px;overflow:hidden}
+.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--mp),var(--ok));width:0%;transition:width .4s ease}
 
-  /* Tela de quiz */
-  #screenQuiz{display:none;}
-  .progress-bar{
-    height:8px; background:var(--border); border-radius:6px; overflow:hidden; margin-bottom:22px;
-  }
-  .progress-fill{height:100%; background:var(--blue); border-radius:6px; transition:width .3s;}
-  .q-meta{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
-  .q-meta span{font-size:13px; font-weight:600; color:var(--text2);}
-  .q-title{font-size:18px; font-weight:700; margin-bottom:22px; line-height:1.4;}
+/* SECTION HEADER */
+.sec-hdr{display:flex;align-items:center;gap:12px;margin:32px 0 12px}
+.sec-icon{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--mp),var(--mp-dark));display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-shrink:0;box-shadow:0 2px 10px rgba(0,158,227,.25)}
+.sec-title{font-size:1rem;font-weight:700;color:var(--navy)}
+.sec-sub{font-size:.76rem;color:var(--muted);margin-top:2px}
 
-  .option{
-    background:#F5F5F5; border:1.5px solid transparent; border-radius:12px;
-    padding:14px 16px; margin-bottom:12px; cursor:pointer;
-    font-size:14.5px; font-weight:500; transition:.15s;
-    display:flex; align-items:center; gap:12px;
-  }
-  .option:hover{background:#EFEFEF;}
-  .option.selected{background:var(--blue-light); border-color:var(--blue); font-weight:600;}
-  .option .dot{
-    width:18px; height:18px; border-radius:50%; border:2px solid #C7CDD3; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .option.selected .dot{border-color:var(--blue); background:var(--blue);}
-  .option.selected .dot::after{content:''; width:8px; height:8px; border-radius:50%; background:#fff;}
+/* QUESTION CARD */
+.qcard{background:var(--white);border-radius:var(--radius);padding:22px 24px;margin-bottom:14px;box-shadow:var(--shadow);border:1.5px solid var(--border);transition:border-color .25s}
+.qcard.a-ok{border-color:var(--ok);background:#FAFFFE}
+.qcard.a-err{border-color:var(--err);background:#FFFAFA}
+.qnum{display:inline-block;background:var(--mp-light);color:var(--mp-dark);font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:9px;text-transform:uppercase;letter-spacing:.5px}
+.qtxt{font-size:.94rem;font-weight:600;line-height:1.55;margin-bottom:14px;color:var(--text)}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:11px;padding:11px 14px;border-radius:9px;cursor:pointer;border:1.5px solid var(--border);background:#F5F5F5;transition:all .18s;user-select:none}
+.opt:hover:not(.locked){border-color:var(--mp);background:var(--mp-light)}
+.opt input[type=radio]{display:none}
+.oball{width:21px;height:21px;border-radius:50%;border:2px solid var(--border);background:#fff;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;transition:all .18s}
+.otxt{font-size:.85rem;line-height:1.5;color:var(--text)}
+.opt.sel{border-color:var(--mp);background:var(--mp-light)}
+.opt.sel .oball{border-color:var(--mp);background:var(--mp)}
+.opt.r-ok{border-color:var(--ok);background:var(--ok-bg)}
+.opt.r-ok .oball{border-color:var(--ok);background:var(--ok);color:#fff}
+.opt.r-err{border-color:var(--err);background:var(--err-bg)}
+.opt.r-err .oball{border-color:var(--err);background:var(--err);color:#fff}
+.opt.locked{cursor:default}
+.opt.locked:hover{border-color:var(--border);background:#F5F5F5}
+.opt.r-ok.locked:hover{border-color:var(--ok);background:var(--ok-bg)}
+.opt.r-err.locked:hover{border-color:var(--err);background:var(--err-bg)}
 
-  .quiz-actions{display:flex; justify-content:flex-end; margin-top:28px;}
-  .quiz-actions .btn{width:auto; padding:13px 30px;}
+/* FEEDBACK */
+.fb{display:none;margin-top:12px;padding:11px 15px;border-radius:9px;font-size:.83rem;line-height:1.55;font-weight:500}
+.fb.show{display:flex;align-items:flex-start;gap:9px}
+.fb.ok{background:var(--ok-bg);color:#065F46;border-left:4px solid var(--ok)}
+.fb.err{background:var(--err-bg);color:#9B1C1C;border-left:4px solid var(--err)}
+.fb-ico{font-size:17px;flex-shrink:0;margin-top:1px}
 
-  /* Tela de resultado */
-  #screenResult{display:none;}
-  #screenResult .card{text-align:center;}
-  .score-badge{
-    width:120px; height:120px; border-radius:50%; margin:0 auto 20px;
-    display:flex; align-items:center; justify-content:center; flex-direction:column;
-    font-weight:800;
-  }
-  .score-badge .num{font-size:34px; line-height:1;}
-  .score-badge .den{font-size:13px; opacity:.8;}
-  .result-label{
-    display:inline-block; padding:8px 18px; border-radius:20px; font-weight:700; font-size:14px;
-    margin-bottom:22px;
-  }
-  .stats{display:flex; justify-content:center; gap:28px; margin:22px 0 30px; flex-wrap:wrap;}
-  .stat{text-align:center;}
-  .stat .n{font-size:24px; font-weight:800;}
-  .stat .l{font-size:12px; color:var(--text2); font-weight:600; text-transform:uppercase; letter-spacing:.03em;}
-  #screenResult .btn{max-width:280px; margin:0 auto;}
+/* CONFIRM BTN */
+.cbtn{margin-top:13px;padding:9px 22px;border-radius:8px;background:var(--mp);color:#fff;border:none;cursor:pointer;font-size:.85rem;font-weight:600;transition:background .18s,transform .12s;display:none;align-items:center;gap:6px}
+.cbtn.vis{display:inline-flex}
+.cbtn:hover{background:var(--mp-dark);transform:translateY(-1px)}
+.cbtn:disabled{opacity:.5;cursor:default;transform:none}
 
-  /* Modo editor */
-  .editable{outline:1px dashed var(--blue); outline-offset:2px; border-radius:4px; cursor:text;}
-  #editorBar{
-    display:none; background:var(--yellow-bg); border:1px solid var(--yellow);
-    color:#7A5200; padding:10px 16px; border-radius:10px; font-size:13px; font-weight:600;
-    margin-bottom:18px; text-align:center;
-  }
+/* RESULTS */
+.results{display:none;background:var(--white);border-radius:var(--radius);padding:34px 30px;margin:28px 0 0;box-shadow:var(--shadow);text-align:center}
+.results.show{display:block}
+.r-score{font-size:3.8rem;font-weight:800;line-height:1;margin:10px 0 5px}
+.r-level{font-size:1rem;font-weight:700;padding:7px 20px;border-radius:99px;display:inline-block;margin:7px 0 18px}
+.lv-lo{background:var(--err-bg);color:var(--err)}
+.lv-mi{background:var(--warn-bg);color:#B45309}
+.lv-hi{background:var(--ok-bg);color:var(--ok)}
+.r-breakdown{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin:18px 0 24px}
+.rb-item{display:flex;flex-direction:column;align-items:center;gap:4px;background:#F5F5F5;border-radius:12px;padding:14px 22px;min-width:100px}
+.rb-n{font-size:1.7rem;font-weight:800}
+.rb-l{font-size:.74rem;color:var(--muted);font-weight:500}
+.rb-ok{background:var(--ok-bg)}.rb-ok .rb-n{color:var(--ok)}
+.rb-err{background:var(--err-bg)}.rb-err .rb-n{color:var(--err)}
+.ss-wrap{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:16px 0}
+.ss-item{background:#F5F5F5;border-radius:9px;padding:10px 16px;font-size:.79rem;text-align:left;min-width:175px;border:1.5px solid var(--border)}
+.ss-t{font-weight:700;color:var(--navy);margin-bottom:3px;font-size:.78rem}
+.ss-s{font-size:1.05rem;font-weight:800}
+
+/* SENDING STATE */
+.sending-box{background:var(--mp-light);border-radius:10px;padding:16px;margin:16px 0;display:none;align-items:center;gap:12px;font-size:.88rem;font-weight:600;color:var(--mp-dark)}
+.sending-box.show{display:flex}
+.spinner{width:20px;height:20px;border:3px solid var(--mp-light);border-top:3px solid var(--mp);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sent-box{background:var(--ok-bg);border-radius:10px;padding:16px;margin:16px 0;display:none;align-items:center;gap:12px;font-size:.88rem;font-weight:600;color:#065F46}
+.sent-box.show{display:flex}
+.error-box{background:var(--err-bg);border-radius:10px;padding:16px;margin:16px 0;display:none;align-items:center;gap:12px;font-size:.85rem;font-weight:600;color:#9B1C1C}
+.error-box.show{display:flex}
+
+/* RESPONDENT BADGE no resultado */
+.respondent-badge{background:var(--mp-light);border-radius:10px;padding:12px 18px;margin:0 auto 16px;display:inline-flex;align-items:center;gap:10px;font-size:.85rem;color:var(--mp-dark);font-weight:600}
+
+.retry-btn{padding:11px 30px;border-radius:9px;background:linear-gradient(135deg,var(--mp),var(--mp-dark));color:#fff;border:none;cursor:pointer;font-size:.9rem;font-weight:700;transition:opacity .18s,transform .12s;box-shadow:0 4px 14px rgba(0,158,227,.3);margin-top:8px}
+.retry-btn:hover{opacity:.9;transform:translateY(-2px)}
+
+/* EDITOR MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center;padding:16px}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:18px;width:100%;max-width:780px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-hdr{background:linear-gradient(135deg,var(--navy),var(--mp-dark));padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-hdr h2{color:#fff;font-size:1.05rem;font-weight:700}
+.modal-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:background .18s}
+.modal-close:hover{background:rgba(255,255,255,.3)}
+.modal-body{overflow-y:auto;padding:24px;flex:1}
+.modal-footer{padding:16px 24px;border-top:1.5px solid var(--border);display:flex;gap:10px;justify-content:flex-end;flex-shrink:0;background:#fff}
+
+/* LOGIN */
+.login-box{text-align:center;padding:20px 0}
+.login-box h3{font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:8px}
+.login-box p{font-size:.85rem;color:var(--muted);margin-bottom:20px}
+.pin-wrap{display:flex;gap:10px;justify-content:center;margin-bottom:16px}
+.pin-wrap input{width:50px;height:54px;text-align:center;font-size:1.4rem;font-weight:700;border:2px solid var(--border);border-radius:10px;outline:none;transition:border-color .18s;color:var(--navy)}
+.pin-wrap input:focus{border-color:var(--mp)}
+.pin-err{color:var(--err);font-size:.82rem;font-weight:600;min-height:20px;margin-bottom:8px}
+.btn-login{background:var(--mp);color:#fff;border:none;padding:10px 28px;border-radius:9px;cursor:pointer;font-size:.9rem;font-weight:700;transition:background .18s}
+.btn-login:hover{background:var(--mp-dark)}
+
+/* EDITOR TABS */
+.ed-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.ed-tab{padding:7px 16px;border-radius:8px;border:1.5px solid var(--border);background:#F5F5F5;cursor:pointer;font-size:.8rem;font-weight:600;color:var(--muted);transition:all .18s}
+.ed-tab.active{background:var(--mp);color:#fff;border-color:var(--mp)}
+
+/* QUESTION EDITOR */
+.qed-card{background:#F9FAFB;border:1.5px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px}
+.qed-num{font-size:.72rem;font-weight:700;color:var(--mp-dark);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.qed-label{font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:5px;margin-top:10px}
+.qed-input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.84rem;font-family:inherit;color:var(--text);outline:none;transition:border-color .18s;resize:vertical;min-height:44px;background:#fff}
+.qed-input:focus{border-color:var(--mp)}
+.opt-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px}
+.opt-radio{margin-top:10px;flex-shrink:0;accent-color:var(--ok);width:16px;height:16px;cursor:pointer}
+.opt-label{font-size:.72rem;color:var(--muted);font-weight:600;min-width:62px;padding-top:10px;flex-shrink:0}
+.correct-badge{background:var(--ok-bg);color:var(--ok);font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:5px;margin-top:10px;white-space:nowrap;flex-shrink:0}
+.btn-add-q{width:100%;padding:10px;border-radius:9px;border:2px dashed var(--mp);background:var(--mp-light);color:var(--mp-dark);font-size:.85rem;font-weight:700;cursor:pointer;transition:background .18s}
+.btn-add-q:hover{background:#d0eef9}
+.btn-del-q{background:var(--err-bg);color:var(--err);border:1.5px solid #F23D4F33;padding:5px 12px;border-radius:7px;cursor:pointer;font-size:.76rem;font-weight:600;margin-left:auto;display:block}
+.btn-del-q:hover{background:#fcd7db}
+.btn-save{background:var(--ok);color:#fff;border:none;padding:10px 24px;border-radius:9px;cursor:pointer;font-size:.88rem;font-weight:700;transition:background .18s}
+.btn-save:hover{background:#008a40}
+.btn-cancel{background:#F5F5F5;color:var(--muted);border:1.5px solid var(--border);padding:10px 24px;border-radius:9px;cursor:pointer;font-size:.88rem;font-weight:600;transition:background .18s}
+.btn-cancel:hover{background:#eee}
+
+/* SETTINGS */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);gap:16px}
+.setting-row:last-child{border-bottom:none}
+.setting-info .s-title{font-size:.88rem;font-weight:700;color:var(--text)}
+.setting-info .s-desc{font-size:.78rem;color:var(--muted);margin-top:3px}
+.setting-ctrl input[type=number],.setting-ctrl input[type=text],.setting-ctrl input[type=password]{padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;font-family:inherit;color:var(--text);outline:none;width:120px;transition:border-color .18s}
+.setting-ctrl input:focus{border-color:var(--mp)}
+.setting-ctrl input[type=text].wide{width:260px}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:11px 22px;border-radius:10px;font-size:.85rem;font-weight:600;opacity:0;transition:all .3s;z-index:9999;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:600px){
+  .hdr{padding:18px 16px;flex-direction:column;align-items:flex-start;gap:12px}
+  .wrap{padding:0 14px}
+  .id-screen{padding:28px 20px}
+}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="header-left">
-    <div class="logo-circle">🕹️</div>
-    <div class="header-titles">
-      <h1>Avaliação - Single Player</h1>
-      <p>MLB · FOS MP Operações</p>
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="hdr-logo">🤝</div>
+    <div>
+      <h1 id="hdr-title">Evaluación · Single Player HSP</h1>
+      <p id="hdr-sub">Mercado Pago · FOS LATAM · Octubre 2024</p>
     </div>
   </div>
-  <button id="editorBtn">⚙️ Modo Editor</button>
-</header>
+  <button class="btn-editor" onclick="openEditor()">⚙️ Modo Editor</button>
+</div>
 
-<!-- TELA DE IDENTIFICAÇÃO -->
-<div id="screenId" class="wrap">
-  <div class="card">
-    <h2>Antes de começar</h2>
-    <p>Preencha seus dados para iniciarmos a avaliação.</p>
-    <div class="field">
-      <label for="inpNome">Nome completo</label>
-      <input type="text" id="inpNome" placeholder="Digite seu nome">
+<div class="wrap">
+
+  <!-- ── TELA DE IDENTIFICAÇÃO ── -->
+  <div class="id-screen" id="id-screen">
+    <div class="id-icon">👤</div>
+    <h2>¡Bienvenido/a a la evaluación!</h2>
+    <p>Antes de comenzar, ingresá tu nombre y e-mail. Tus respuestas y resultado final serán registrados automáticamente.</p>
+    <div class="id-form">
+      <div class="id-field">
+        <label class="id-label">👤 Nombre completo</label>
+        <input class="id-input" id="inp-nome" type="text" placeholder="Ej: Juan García" autocomplete="name">
+        <div class="id-err" id="err-nome"></div>
+      </div>
+      <div class="id-field">
+        <label class="id-label">📧 E-mail corporativo</label>
+        <input class="id-input" id="inp-email" type="email" placeholder="Ej: juan.garcia@mercadopago.com" autocomplete="email">
+        <div class="id-err" id="err-email"></div>
+      </div>
+      <button class="btn-start" onclick="startEval()">Comenzar evaluación →</button>
+      <div class="id-note">🔒 Tus datos se usan solo para registro interno</div>
     </div>
-    <div class="field">
-      <label for="inpEmail">E-mail</label>
-      <input type="email" id="inpEmail" placeholder="seuemail@empresa.com">
+  </div>
+
+  <!-- ── QUIZ (hidden until identification) ── -->
+  <div id="quiz-wrap" style="display:none">
+    <div class="intro">
+      <h2>📋 Instrucciones</h2>
+      <p id="intro-text">Esta evaluación cubre los principales casos de uso del flujo <strong>Single Player</strong>. Seleccioná una respuesta por pregunta y confirmá antes de avanzar.</p>
+      <div class="badges">
+        <span class="badge b-red">❌ Menos de 7.0 → Nivelamiento necesario</span>
+        <span class="badge b-amb">⚠️ 7.0 → En aprendizaje</span>
+        <span class="badge b-grn">✅ Más de 7.0 → Aprendizaje superado</span>
+      </div>
     </div>
-    <button class="btn" id="btnStart">Iniciar Avaliação →</button>
+
+    <div class="prog-wrap" style="margin-top:20px">
+      <div class="prog-labels"><span>Progreso</span><span id="prog-txt">0 / 0 respondidas</span></div>
+      <div class="prog-bg"><div class="prog-fill" id="prog-fill"></div></div>
+    </div>
+
+    <div id="quiz-area"></div>
+
+    <!-- RESULTS -->
+    <div class="results" id="results">
+      <div style="font-size:2rem">🎯</div>
+      <h2 style="font-size:1.25rem;font-weight:800;color:var(--navy);margin:8px 0 4px">Resultado Final</h2>
+
+      <div class="respondent-badge" id="respondent-badge"></div>
+
+      <div class="r-score" id="r-score"></div>
+      <div class="r-level" id="r-level"></div>
+      <p id="r-msg" style="color:var(--muted);font-size:.88rem;max-width:480px;margin:0 auto 18px;line-height:1.6"></p>
+
+      <div class="r-breakdown">
+        <div class="rb-item rb-ok"><div class="rb-n" id="rb-ok">0</div><div class="rb-l">✅ Correctas</div></div>
+        <div class="rb-item rb-err"><div class="rb-n" id="rb-err">0</div><div class="rb-l">❌ Incorrectas</div></div>
+        <div class="rb-item"><div class="rb-n" style="color:var(--mp)" id="rb-tot">0</div><div class="rb-l">📋 Total</div></div>
+      </div>
+
+      <div style="font-size:.82rem;font-weight:700;color:var(--navy);margin-bottom:8px">Puntuación por sección</div>
+      <div class="ss-wrap" id="ss-wrap"></div>
+
+      <!-- STATUS DO ENVIO -->
+      <div class="sending-box" id="sending-box">
+        <div class="spinner"></div>
+        <span>Enviando resultado a la planilla...</span>
+      </div>
+      <div class="sent-box" id="sent-box">
+        <span>✅</span>
+        <span>Resultado registrado con éxito en la planilla.</span>
+      </div>
+      <div class="error-box" id="error-box">
+        <span>⚠️</span>
+        <span id="error-msg">No se pudo enviar el resultado. Avisá a tu supervisor.</span>
+      </div>
+
+      <a class="btn-home" href="index.html">🏠 Volver al inicio</a>
+
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:44px;font-size:.75rem;color:var(--muted)">
+    Manual Single Player HSP · FOS LATAM 2024 · Mercado Pago
   </div>
 </div>
 
-<!-- TELA DE QUIZ -->
-<div id="screenQuiz" class="wrap">
-  <div id="editorBar">Modo Editor ativo — clique em uma pergunta ou opção para editar o texto.</div>
-  <div class="card">
-    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-    <div class="q-meta">
-      <span id="qCounter">Pergunta 1 de 15</span>
+<!-- EDITOR MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h2 id="modal-title">⚙️ Modo Editor</h2>
+      <button class="modal-close" onclick="closeEditor()">✕</button>
     </div>
-    <div class="q-title" id="qTitle"></div>
-    <div id="qOptions"></div>
-    <div class="quiz-actions">
-      <button class="btn" id="btnNext" disabled>Próximo →</button>
-    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
   </div>
 </div>
 
-<!-- TELA DE RESULTADO -->
-<div id="screenResult" class="wrap">
-  <div class="card">
-    <div class="score-badge" id="scoreBadge">
-      <div class="num" id="scoreNum">0.0</div>
-      <div class="den">/ 10</div>
-    </div>
-    <div class="result-label" id="resultLabel">—</div>
-    <div class="stats">
-      <div class="stat"><div class="n" id="statCorrect" style="color:var(--green)">0</div><div class="l">Corretas</div></div>
-      <div class="stat"><div class="n" id="statIncorrect" style="color:var(--red)">0</div><div class="l">Incorretas</div></div>
-      <div class="stat"><div class="n" id="statTotal">0</div><div class="l">Total</div></div>
-    </div>
-    <a href="index.html" class="btn btn-outline" style="text-decoration:none; display:inline-flex;">🏠 Voltar ao início</a>
-  </div>
-</div>
+<div class="toast" id="toast"></div>
 
 <script>
-/* =========================================================
-   CONFIGURAÇÃO DA AVALIAÇÃO
-   ========================================================= */
-const CONFIG = {
-  avaliacaoNome: "Single Player - MLB",
+// ══════════════════════════════════════════════
+//  GOOGLE SHEETS ENDPOINT
+// ══════════════════════════════════════════════
+const SHEETS_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfbvjEJ8GnFniMLSX7NQKQcX2mly06rtnC0xoZdBL0Pixt8Ng/formResponse";
+const FORM_ENTRY_IDS = {
+  dataHora:   "entry.2017782703",
+  avaliacao:  "entry.78177913",
+  nome:       "entry.1818530692",
+  email:      "entry.1056222960",
+  nota:       "entry.48293095",
+  resultado:  "entry.381965002",
+  corretas:   "entry.144582871",
+  incorretas: "entry.1335730000",
+  total:      "entry.891321817",
+  detalhes:   "entry.407031098"
+};
 
-  formActionUrl: "https://docs.google.com/forms/u/0/d/e/1FAIpQLSfPhCyKWzRRf1PxE-MO6qxmv436UxZfBAmVe7WY0tmY0_YCGg/formResponse",
-
-  formEntries: {
-    dataHora:            "entry.2017782703",
-    avaliacao:           "entry.78177913",
-    nome:                "entry.1818530692",
-    email:               "entry.1056222960",
-    nota:                "entry.48293095",
-    resultado:           "entry.381965002",
-    corretas:            "entry.144582871",
-    incorretas:          "entry.1335730000",
-    total:               "entry.891321817",
-    respostasDetalhadas: "entry.407031098"
-  },
-
-  editorPin: "1234",
-
-  questions: [
+// ══════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════
+let CONFIG = {
+  title:         "Evaluación · Single Player HSP",
+  subtitle:      "Mercado Pago · FOS LATAM · Octubre 2024",
+  avaliacaoNome: "Single Player HSP",
+  intro:         "Esta evaluación cubre los principales casos de uso del flujo <strong>Single Player</strong>. Seleccioná una respuesta por pregunta y confirmá antes de avanzar.",
+  thresholdLow:  7,
+  thresholdHigh: 7,
+  password:      "1234",
+  sections: [
     {
-      q: "O que caracteriza uma operação Single Player?",
-      options: [
-        "Operações de autosserviço de vendas dentro do aplicativo do Mercado Pago, sem necessidade de intermediador ou vendedor",
-        "Vendas realizadas exclusivamente por um vendedor físico",
-        "Transações que exigem aprovação manual de um caixa",
-        "Pagamentos processados apenas fora do aplicativo"
-      ],
-      correct: 0
+      title: "Conceptos Generales & Plazos", icon: "⚡",
+      questions: [
+        { q:"¿Cuál es la definición correcta de una operación Single Player en Mercado Pago?",
+          opts:["Operaciones donde el usuario necesita interactuar con un vendedor externo para completar el pago.","Operaciones que el usuario comienza y termina en una gestión propia, sin necesidad de un intermediario o vendedor.","Operaciones realizadas únicamente entre dos usuarios registrados en Mercado Libre.","Pagos realizados exclusivamente mediante tarjeta de crédito sin intervención del sistema Wallet."],
+          correct:1, fb_ok:"✅ ¡Correcto! Single Player son operaciones que el usuario inicia y finaliza de forma autónoma, sin necesitar un vendedor o intermediario.", fb_err:"❌ Incorrecto. Single Player son operaciones que el usuario comienza y termina en una gestión propia, sin necesidad de un intermediario." },
+        { q:"¿Cuáles son los servicios que forman parte del flujo Single Player?",
+          opts:["Compra de productos físicos, envío a domicilio y pago en cuotas con tarjeta de crédito.","Recarga de celulares, pago de servicios, recarga de antena, Digital Goods y recarga de tarjeta de transporte.","Transferencias bancarias, inversiones y retiros de efectivo en cajeros automáticos.","Solo recarga de celulares y Digital Goods, ya que son los únicos aprobados para LATAM."],
+          correct:1, fb_ok:"✅ ¡Correcto! Los servicios SP incluyen: recarga de celulares, pago de servicios, recarga de antena, Digital Goods y recarga de tarjeta de transporte.", fb_err:"❌ Incorrecto. Los servicios SP son: recarga de celulares, pago de servicios, recarga de antena, Digital Goods y recarga de tarjeta de transporte." },
+        { q:"¿Cuál es el plazo correcto del flujo de pagos Single Player desde el momento del pago hasta la conciliación?",
+          opts:["D (pago) → +12 horas (pago acreditado) → D+2 (pago conciliado).","D (pago) → +6 horas (pago acreditado) → D+1 (pago conciliado).","D (pago) → +24 horas (pago acreditado) → D+3 (pago conciliado).","D (pago) → +1 hora (pago acreditado) → D+1 (pago conciliado)."],
+          correct:1, fb_ok:"✅ ¡Correcto! El flujo es D (pago) → +6 horas (pago acreditado) → D+1 (pago conciliado).", fb_err:"❌ Incorrecto. El plazo correcto es: D → +6 horas (acreditado) → D+1 (conciliado)." },
+        { q:"¿Cómo se identifica que un pago es Single Player a través de OneTool?",
+          opts:["En BU aparece 'SINGLE PLAYER' y en SBU aparece 'WALLET'.","En BU aparece 'WALLET' (o POINT) y en SBU aparece 'SINGLE PLAYER'.","El campo 'Procesamiento' indica 'Single Player' en la pantalla de pagos.","Se identifica porque el Marketplace siempre aparece como 'MELI' en los pagos SP."],
+          correct:1, fb_ok:"✅ ¡Correcto! En BU siempre aparece WALLET (o POINT) y en SBU siempre aparece SINGLE PLAYER.", fb_err:"❌ Incorrecto. Para identificar un pago SP en OneTool: BU = WALLET o POINT, y SBU = SINGLE PLAYER." }
+      ]
     },
     {
-      q: "Quais produtos fazem parte do fluxo geral do Single Player?",
-      options: [
-        "Recarga de celular, produtos digitais, pagamento de serviços, recarga de antena e recarga de cartão de transporte",
-        "Somente recarga de celular e produtos digitais",
-        "Apenas pagamentos de boletos bancários",
-        "Exclusivamente recargas de antena"
-      ],
-      correct: 0
+      title: "Pago Pendiente Fuera de Plazo", icon: "⏰",
+      questions: [
+        { q:"¿Qué es un Pago Pendiente Fuera de Plazo en el flujo Single Player?",
+          opts:["Un pago que fue cobrado dos veces al usuario por error del sistema.","Un pago que se encuentra fuera del plazo de 6 horas de acreditación.","Un pago rechazado porque el usuario no tenía saldo suficiente en su cuenta.","Un pago que fue acreditado al proveedor equivocado por error de código de barras."],
+          correct:1, fb_ok:"✅ ¡Correcto! Un Pago Pendiente Fuera de Plazo es aquel que supera el plazo de 6 horas de acreditación.", fb_err:"❌ Incorrecto. Un Pago Pendiente Fuera de Plazo es el que supera el plazo de 6 horas de acreditación." },
+        { q:"En el Admin SP, si Payment = Approved y Provider = Approved en un Pago Pendiente Fuera de Plazo, ¿cuál es la acción correcta?",
+          opts:["Aplicar el REFUND inmediatamente porque el plazo ya fue superado.","Aplicar la cancelación del pago y devolver el dinero al usuario.","El pago se generó correctamente; no corresponde la derivación. Se debe marcar como incorrecta.","Derivar el caso a TMO para que ellos determinen la acción a seguir."],
+          correct:2, fb_ok:"✅ ¡Correcto! Si Payment = Approved y Provider = Approved, el pago se generó correctamente y no corresponde la derivación.", fb_err:"❌ Incorrecto. Cuando ambos estados son Approved, el pago se generó correctamente. No corresponde la derivación." },
+        { q:"Si el Payment = Approved y el Provider aparece 'vacío/en blanco' en el Admin SP, ¿cuál es el procedimiento correcto?",
+          opts:["Analizar en el Admin SP y, si el Provider también aparece vacío o rechazado allí, aplicar el REFUND.","Cancelar el pago directamente sin necesidad de validación adicional.","Informar al usuario que el pago se procesó correctamente y no se puede devolver.","Esperar 48 horas antes de tomar cualquier acción para que el sistema se concilie."],
+          correct:0, fb_ok:"✅ ¡Correcto! Se analiza en el Admin SP y si también aparece Provider vacío o rechazado, se aplica el REFUND.", fb_err:"❌ Incorrecto. Cuando el Provider está vacío, se analiza en el Admin SP y si también aparece vacío o rechazado, se aplica el REFUND." },
+        { q:"En Simetrik v2, cuando el pago está 'liquidado' y el payment está 'Aprobado', ¿qué se debe hacer?",
+          opts:["Aplicar el REFUND directamente desde el Admin SP.","Informar que el pago se generó correctamente y adjuntar el Transaction ID.","Cancelar el pago y derivar a Terceros para gestión.","Devolver el dinero al usuario sin consultar las liquidaciones."],
+          correct:1, fb_ok:"✅ ¡Correcto! Si está liquidado + payment aprobado, se informa que el pago se generó correctamente y se adjunta el Transaction ID.", fb_err:"❌ Incorrecto. Si está liquidado + payment aprobado, se informa que se generó correctamente y se adjunta el Transaction ID." },
+        { q:"¿Cuándo se debe revisar Simetrik para validar un pago fuera de plazo?",
+          opts:["Inmediatamente después de que el usuario reporta el problema, sin importar el tiempo.","Siempre debe verse 24 horas posterior al pago para tener información completa de liquidación.","Solo a partir de los 3 días hábiles después del pago.","En cualquier momento, ya que Simetrik se actualiza en tiempo real."],
+          correct:1, fb_ok:"✅ ¡Correcto! Simetrik debe revisarse siempre 24 horas posterior al pago.", fb_err:"❌ Incorrecto. Simetrik debe revisarse siempre 24 horas posterior al pago." }
+      ]
     },
     {
-      q: "No fluxo de prazos do Single Player, quando o pagamento (D) é considerado 'Pagamento Conciliado'?",
-      options: [
-        "No mesmo dia (D)",
-        "D+1",
-        "D+7",
-        "D+30"
-      ],
-      correct: 1
+      title: "Pago Duplicado", icon: "🔁",
+      questions: [
+        { q:"¿Cuál es la definición de un Pago Duplicado en el contexto de Single Player?",
+          opts:["Un pago que se realizó al proveedor equivocado por error del sistema.","Un pago que se le cobra al usuario de manera duplicada por la misma operación.","Un pago que fue rechazado y vuelto a procesar automáticamente por el sistema.","Un pago que supera el plazo de 6 horas para la acreditación con el proveedor."],
+          correct:1, fb_ok:"✅ ¡Correcto! Un Pago Duplicado es cuando se le cobra al usuario de manera duplicada por la misma operación.", fb_err:"❌ Incorrecto. Un Pago Duplicado es cuando se le cobra al usuario de manera duplicada por la misma operación." },
+        { q:"En un Pago Duplicado donde ambos pagos están en estado Approved/Provider Approved, ¿cuál es la acción correcta?",
+          opts:["Devolver los dos pagos, ya que ambos fueron cobrados de manera incorrecta.","Realizar la devolución de uno solo de los pagos al usuario.","No hacer nada porque ambos pagos se generaron exitosamente.","Cancelar ambos pagos y solicitar al usuario que realice el pago nuevamente."],
+          correct:1, fb_ok:"✅ ¡Correcto! Cuando ambos pagos están en Approved, se realiza la devolución de uno solo.", fb_err:"❌ Incorrecto. Si ambos pagos están en Approved, se realiza la devolución de uno solo." },
+        { q:"En el Admin SP, si el resultado muestra todo en color verde, ¿qué indica esto?",
+          opts:["Que el pago está pendiente y necesita captura manual por parte del equipo.","Que el pago tiene un estado inconsistente y se deben verificar las liquidaciones.","Que el pago se generó de forma exitosa.","Que el pago fue rechazado y se debe realizar el REFUND al usuario."],
+          correct:2, fb_ok:"✅ ¡Correcto! Todo en verde en el Admin SP indica que el pago se generó de forma exitosa.", fb_err:"❌ Incorrecto. Todo en verde = pago generado exitosamente. Rojo = estado inconsistente." },
+        { q:"En un Pago Duplicado donde NINGUNO de los pagos fue liquidado por la entidad, ¿qué se debe hacer?",
+          opts:["Devolver solo uno de los dos pagos y mantener el otro como referencia.","Informar al usuario que los pagos fueron acreditados y no se puede hacer nada.","Realizar la devolución de ambos pagos a través de la herramienta Admin de Single Player.","Derivar el caso directamente a PCO sin realizar ninguna acción previa."],
+          correct:2, fb_ok:"✅ ¡Correcto! Si ninguno fue liquidado, se devuelven ambos pagos a través del Admin SP.", fb_err:"❌ Incorrecto. Si ninguno fue liquidado, se realiza la devolución de ambos por Admin SP." }
+      ]
     },
     {
-      q: "Depois de conciliado, em quanto tempo o pagamento passa a ser considerado 'Acreditado'?",
-      options: [
-        "Imediatamente",
-        "24 horas",
-        "48 horas",
-        "6 horas"
-      ],
-      correct: 3
+      title: "Pago Rechazado", icon: "❌",
+      questions: [
+        { q:"¿Cuál es la primera acción al gestionar un Pago Rechazado en Single Player?",
+          opts:["Aplicar inmediatamente el REFUND desde el Admin SP sin necesidad de verificar.","Corroborar que nos hayan enviado el número de Payment y revisarlo en el Admin de Single Player.","Contactar directamente al proveedor para que realice la devolución.","Esperar 72 horas para que el sistema revierta el pago automáticamente."],
+          correct:1, fb_ok:"✅ ¡Correcto! El primer paso es corroborar el número de Payment y revisarlo en el Admin SP.", fb_err:"❌ Incorrecto. La primera acción es corroborar el número de Payment y luego revisarlo en el Admin SP." },
+        { q:"En un Pago Rechazado, si el pago aparece inconsistente en el Admin pero fue liquidado por la entidad, ¿qué se hace?",
+          opts:["Adjuntar el comprobante o Transaction ID como evidencia del pago exitoso.","Realizar la devolución por Admin SP sin verificar la liquidación.","Cancelar el pago y derivar a Terceros para su gestión.","Ignorar el caso porque el error es del sistema y no del usuario."],
+          correct:0, fb_ok:"✅ ¡Correcto! Si fue liquidado, se adjunta el comprobante o Transaction ID.", fb_err:"❌ Incorrecto. Si fue liquidado por la entidad, se adjunta el comprobante o Transaction ID." },
+        { q:"¿Qué ocurre si el pago aparece inconsistente en el Admin y NO fue liquidado por la entidad?",
+          opts:["Se procede a realizar la devolución por Admin SP al usuario.","Se informa al usuario que el pago fue exitoso y no se puede hacer nada.","Se deriva el caso a PCO para aprobación antes de cualquier acción.","Se espera que el sistema lo resuelva automáticamente en D+1."],
+          correct:0, fb_ok:"✅ ¡Correcto! Si no fue liquidado, se procede a realizar la devolución por Admin SP.", fb_err:"❌ Incorrecto. Si no fue liquidado, se realiza la devolución por Admin SP." }
+      ]
     },
     {
-      q: "No status 'Pendente/Pending' do Admin Single Player, o que acontece com o dinheiro?",
-      options: [
-        "Dinheiro devolvido",
-        "Dinheiro retido",
-        "Dinheiro liberado",
-        "Dinheiro creditado ao provedor"
-      ],
-      correct: 1
-    },
-    {
-      q: "Um pagamento está 'Aprovado em One Source', 'Inconsistente no Admin SP' e NÃO está liquidado no Simetrik. Qual ação deve ser tomada?",
-      options: [
-        "CANCELAR",
-        "CAPTURAR",
-        "REFUND",
-        "Nenhuma ação, aguardar"
-      ],
-      correct: 2
-    },
-    {
-      q: "Um pagamento está 'Pendente em One Source', 'Inconsistente no Admin SP' e ESTÁ liquidado no Simetrik. Qual ação deve ser tomada?",
-      options: [
-        "CAPTURAR",
-        "CANCELAR",
-        "REFUND",
-        "Encaminhar para Terceros"
-      ],
-      correct: 0
-    },
-    {
-      q: "O que é a ferramenta Cx One?",
-      options: [
-        "Sistema de conciliação bancária",
-        "Ferramenta pela qual recebemos um caso de Atendimento ao Cliente e fornecemos a resposta",
-        "Plataforma de emissão de boletos",
-        "Ferramenta de gestão de estoque"
-      ],
-      correct: 1
-    },
-    {
-      q: "Qual role/perfil deve ser solicitado para operar o Admin de Single Player?",
-      options: [
-        "Admin Global - Full Access",
-        "Perfil de Desenvolvedor - Read Only",
-        "Admin Nuevo Mundo - Asignación de roles MP - ADMIN_SP_WRITE & SINGLEPLAYER - SINGLEPLAYER-ADMIN_SP_READ",
-        "Usuário Financeiro - Aprovador"
-      ],
-      correct: 2
-    },
-    {
-      q: "Onde buscamos uma operação individual no Admin Single Player?",
-      options: [
-        "Transações > Vista Massiva",
-        "Transações > Vista Rápida",
-        "Relatórios > Exportar",
-        "Configurações > Usuários"
-      ],
-      correct: 1
-    },
-    {
-      q: "Onde buscamos e executamos ações em várias operações ao mesmo tempo no Admin Single Player?",
-      options: [
-        "Transações > Vista Rápida",
-        "Backlog > Gdoc",
-        "Simetrik > Gestão Transacional",
-        "Transações > Vista Massiva"
-      ],
-      correct: 3
-    },
-    {
-      q: "No Simetrik (SMKT V2), o que significa o TX_REC_STATUS 'Reconciled'?",
-      options: [
-        "A devolução pode ocorrer normalmente",
-        "Não se deve devolver o pagamento; responder com o Script 04",
-        "Encaminhar o caso para o time interno",
-        "O pagamento deve ser cancelado imediatamente"
-      ],
-      correct: 1
-    },
-    {
-      q: "No Simetrik (SMKT V2), quando o TX_REC_STATUS aparece como 'null/em branco', qual é a ação correta?",
-      options: [
-        "Aplicar refund automaticamente",
-        "Aprovar o pagamento sem análise",
-        "Encaminhar o caso para os internos responsáveis (ex: Jéssica Pereira / Gleice)",
-        "Fechar o caso sem resposta"
-      ],
-      correct: 2
-    },
-    {
-      q: "O que é o 'Transaction Intent'?",
-      options: [
-        "Um tipo de cartão de crédito exclusivo do Mercado Pago",
-        "Uma máscara de pagamento por trás da transação, identificada por um código alfanumérico, usada quando não é possível localizar o payment normalmente",
-        "Um relatório financeiro mensal",
-        "Um status de pagamento cancelado"
-      ],
-      correct: 1
-    },
-    {
-      q: "Em caso de pagamento duplicado, quando ambos os pagamentos estão 'Approved' e 'Provider Approved', qual é a ação correta?",
-      options: [
-        "Cancelar ambos os pagamentos",
-        "Capturar ambos os pagamentos",
-        "Realizar a devolução de um dos pagamentos",
-        "Não realizar nenhuma ação"
-      ],
-      correct: 2
+      title: "Pagos Cruzados de Servicios", icon: "🔀",
+      questions: [
+        { q:"¿Qué es un Cruce de Barras (Pago Cruzado) en el contexto de Single Player?",
+          opts:["Cuando el usuario ingresa manualmente un número de cuenta incorrecto al realizar el pago.","Cuando el usuario escanea una factura y Mercado Pago, por error, le asigna otro servicio para pagar debido a una mala lectura interna del código de barras.","Cuando el usuario realiza dos pagos simultáneos al mismo proveedor y ambos son aprobados.","Cuando el pago se procesa fuera del horario habitual y queda en estado pendiente."],
+          correct:1, fb_ok:"✅ ¡Correcto! El Cruce de Barras ocurre cuando MP asigna otro servicio por error en la lectura del código de barras.", fb_err:"❌ Incorrecto. El Cruce de Barras es cuando MP asigna otro servicio por error en la lectura del código de barras al escanear una factura." },
+        { q:"¿Cuáles son las características que SIEMPRE se presentan en un caso de Cruce de Barras?",
+          opts:["Los valores serán diferentes, los códigos de barras serán completamente distintos y el mismo servicio aparecerá en ambos.","Los valores serán iguales, los códigos de barras coincidirán en algunos números y los servicios pagados serán distintos.","El usuario habrá pagado dos veces el mismo servicio con el mismo monto.","El pago siempre tendrá estado 'Pending' y el proveedor aparecerá como 'Created'."],
+          correct:1, fb_ok:"✅ ¡Correcto! En un Cruce: valores iguales, códigos similares y servicios distintos.", fb_err:"❌ Incorrecto. En un cruce: valores iguales, códigos similares y servicios distintos." },
+        { q:"En el flujo de un Pago Cruzado, ¿qué documentación es OBLIGATORIA para iniciar la gestión?",
+          opts:["Solo el número de pago de Mercado Pago (Payment ID) es suficiente para iniciar.","El número de pago MP, el comprobante de pago y la factura escaneada que se utilizó para leer el código de barras.","Solo el comprobante de pago y el nombre del proveedor al que se pagó incorrectamente.","El DNI del usuario y una declaración jurada de que el pago fue incorrecto."],
+          correct:1, fb_ok:"✅ ¡Correcto! Son obligatorios: número de pago MP, comprobante y factura escaneada.", fb_err:"❌ Incorrecto. Son obligatorios: número de pago MP, comprobante de pago y factura escaneada." },
+        { q:"En un caso de Pago Cruzado, si ambas transacciones están en estado RECONCILED en Simetrik, ¿cuál es la acción correcta?",
+          opts:["Aplicar REFUND en ambos pagos porque el cruce de barras implica siempre devolver el dinero.","No es necesario devolver; ambas transacciones fueron liquidadas. El usuario debe verificar directamente con el servicio.","Completar la planilla de Cruces de Barras y derivar a Terceros para que gestionen el reembolso.","Aplicar un Cashback al collector y enviar para aprobación de PCO antes de resolver."],
+          correct:1, fb_ok:"✅ ¡Correcto! Si ambas están RECONCILED, no se devuelve; el usuario verifica con el servicio.", fb_err:"❌ Incorrecto. Si ambas están RECONCILED, no es necesario devolver. El usuario verifica con el servicio." }
+      ]
     }
   ]
 };
 
-/* =========================================================
-   ESTADO
-   ========================================================= */
-let currentQ = 0;
-let selectedOption = null;
-const answers = new Array(CONFIG.questions.length).fill(null);
-let editorMode = false;
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let answered = {}, selected = {};
+let editorUnlocked = false, editorTab = 0;
+let userName = '', userEmail = '';
 
-/* =========================================================
-   TELA DE IDENTIFICAÇÃO
-   ========================================================= */
-document.getElementById('btnStart').addEventListener('click', () => {
-  const nome = document.getElementById('inpNome').value.trim();
-  const email = document.getElementById('inpEmail').value.trim();
-  if(!nome || !email){
-    alert('Por favor, preencha nome e e-mail para continuar.');
-    return;
+// ══════════════════════════════════════════════
+//  IDENTIFICAÇÃO
+// ══════════════════════════════════════════════
+function startEval() {
+  const nome  = document.getElementById('inp-nome').value.trim();
+  const email = document.getElementById('inp-email').value.trim();
+  let ok = true;
+
+  document.getElementById('err-nome').textContent  = '';
+  document.getElementById('err-email').textContent = '';
+  document.getElementById('inp-nome').classList.remove('err-field');
+  document.getElementById('inp-email').classList.remove('err-field');
+
+  if (!nome) {
+    document.getElementById('err-nome').textContent = '⚠️ Ingresá tu nombre completo.';
+    document.getElementById('inp-nome').classList.add('err-field');
+    ok = false;
   }
-  document.getElementById('screenId').style.display = 'none';
-  document.getElementById('screenQuiz').style.display = 'block';
-  renderQuestion();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    document.getElementById('err-email').textContent = '⚠️ Ingresá un e-mail válido.';
+    document.getElementById('inp-email').classList.add('err-field');
+    ok = false;
+  }
+  if (!ok) return;
+
+  userName  = nome;
+  userEmail = email;
+
+  document.getElementById('id-screen').style.display  = 'none';
+  document.getElementById('quiz-wrap').style.display   = 'block';
+  buildQuiz();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && document.getElementById('id-screen').style.display !== 'none') startEval();
 });
 
-/* =========================================================
-   TELA DE QUIZ
-   ========================================================= */
-function renderQuestion(){
-  const total = CONFIG.questions.length;
-  const q = CONFIG.questions[currentQ];
+// ══════════════════════════════════════════════
+//  BUILD QUIZ
+// ══════════════════════════════════════════════
+function buildQuiz() {
+  answered = {}; selected = {};
+  const area = document.getElementById('quiz-area');
+  area.innerHTML = '';
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('hdr-title').textContent = CONFIG.title;
+  document.getElementById('hdr-sub').textContent   = CONFIG.subtitle;
+  document.getElementById('intro-text').innerHTML  = CONFIG.intro;
 
-  document.getElementById('progressFill').style.width = ((currentQ)/total*100) + '%';
-  document.getElementById('qCounter').textContent = `Pergunta ${currentQ+1} de ${total}`;
-  document.getElementById('qTitle').textContent = q.q;
-  if(editorMode) document.getElementById('qTitle').classList.add('editable');
+  let gq = 0;
+  CONFIG.sections.forEach((sec, si) => {
+    const div = document.createElement('div');
+    const qS = gq + 1, qE = gq + sec.questions.length;
+    div.innerHTML = `<div class="sec-hdr"><div class="sec-icon">${sec.icon}</div>
+      <div><div class="sec-title">${sec.title}</div><div class="sec-sub">Preguntas ${qS}–${qE}</div></div></div>`;
 
-  const optsDiv = document.getElementById('qOptions');
-  optsDiv.innerHTML = '';
-  selectedOption = null;
-
-  q.options.forEach((optText, idx) => {
-    const el = document.createElement('div');
-    el.className = 'option';
-    el.innerHTML = `<div class="dot"></div><div class="opt-text${editorMode ? ' editable' : ''}">${optText}</div>`;
-    el.addEventListener('click', (e) => {
-      if(editorMode && e.target.classList.contains('opt-text')) return;
-      document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-      el.classList.add('selected');
-      selectedOption = idx;
-      document.getElementById('btnNext').disabled = false;
+    sec.questions.forEach((qObj, qi) => {
+      gq++;
+      const card = document.createElement('div');
+      card.className = 'qcard'; card.id = `qcard-${gq}`;
+      const optsHtml = qObj.opts.map((o,oi)=>`
+        <label class="opt" data-q="${gq}" data-idx="${oi}" onclick="selectOpt(${gq},${oi})">
+          <input type="radio" name="q${gq}" value="${oi}">
+          <div class="oball" id="ball-${gq}-${oi}"></div>
+          <div class="otxt">${o}</div>
+        </label>`).join('');
+      card.innerHTML = `<div class="qnum">Pregunta ${gq}</div>
+        <div class="qtxt">${qObj.q}</div>
+        <div class="opts">${optsHtml}</div>
+        <button class="cbtn" id="btn-${gq}" onclick="confirmAnswer(${gq})">Siguiente →</button>`;
+      div.appendChild(card);
     });
-    optsDiv.appendChild(el);
+    area.appendChild(div);
   });
-
-  document.getElementById('btnNext').disabled = true;
-  document.getElementById('btnNext').textContent = (currentQ === total - 1) ? 'Finalizar →' : 'Próximo →';
+  updateProgress();
 }
 
-document.getElementById('btnNext').addEventListener('click', () => {
-  if(selectedOption === null) return;
-  answers[currentQ] = selectedOption;
+function totalQ() { return CONFIG.sections.reduce((a,s)=>a+s.questions.length,0); }
 
-  if(currentQ < CONFIG.questions.length - 1){
-    currentQ++;
-    renderQuestion();
+// ══════════════════════════════════════════════
+//  QUIZ LOGIC
+// ══════════════════════════════════════════════
+function selectOpt(q, idx) {
+  if (answered[q] !== undefined) return;
+  document.querySelectorAll(`.opt[data-q="${q}"]`).forEach(o=>o.classList.remove('sel'));
+  document.querySelector(`.opt[data-q="${q}"][data-idx="${idx}"]`).classList.add('sel');
+  selected[q] = idx;
+  const btn = document.getElementById(`btn-${q}`);
+  if (btn) btn.classList.add('vis');
+}
+
+function confirmAnswer(gq) {
+  if (answered[gq] !== undefined || selected[gq] === undefined) return;
+  let correctIdx = 0, count = 0;
+  outer: for (const sec of CONFIG.sections) {
+    for (const q of sec.questions) { count++; if (count===gq){correctIdx=q.correct;break outer;} }
+  }
+  const isOk = selected[gq] === correctIdx;
+  answered[gq] = isOk;
+  const btn = document.getElementById(`btn-${gq}`);
+  btn.disabled = true; btn.textContent = '✓ Respondida';
+  document.querySelectorAll(`.opt[data-q="${gq}"]`).forEach(o => { o.classList.add('locked'); });
+  updateProgress();
+  if (Object.keys(answered).length === totalQ()) setTimeout(showResults, 600);
+}
+
+function updateProgress() {
+  const done = Object.keys(answered).length, tot = totalQ();
+  document.getElementById('prog-txt').textContent = `${done} / ${tot} respondidas`;
+  document.getElementById('prog-fill').style.width = tot ? `${(done/tot)*100}%` : '0%';
+}
+
+// ══════════════════════════════════════════════
+//  RESULTS + ENVIO PARA SHEETS
+// ══════════════════════════════════════════════
+function showResults() {
+  const tot   = totalQ();
+  const ok    = Object.values(answered).filter(Boolean).length;
+  const score = tot > 0 ? parseFloat(((ok/tot)*10).toFixed(1)) : 0;
+
+  document.getElementById('r-score').textContent = score.toFixed(1);
+  document.getElementById('rb-ok').textContent   = ok;
+  document.getElementById('rb-err').textContent  = tot - ok;
+  document.getElementById('rb-tot').textContent  = tot;
+  document.getElementById('respondent-badge').innerHTML = `👤 <strong>${userName}</strong> &nbsp;·&nbsp; 📧 ${userEmail}`;
+
+  const lvEl = document.getElementById('r-level'), msgEl = document.getElementById('r-msg');
+  let nivelLabel = '';
+  if (score < CONFIG.thresholdLow) {
+    lvEl.textContent='❌ Necesita nivelamiento'; lvEl.className='r-level lv-lo';
+    msgEl.textContent='Tu puntuación está por debajo del mínimo. Repasá el manual de Single Player HSP.';
+    nivelLabel = 'Necesita nivelamiento';
+  } else if (score <= CONFIG.thresholdHigh) {
+    lvEl.textContent='⚠️ Dentro del aprendizaje'; lvEl.className='r-level lv-mi';
+    msgEl.textContent='Estás dentro del aprendizaje esperado. Seguí repasando para consolidar el conocimiento.';
+    nivelLabel = 'En aprendizaje';
   } else {
-    finishQuiz();
+    lvEl.textContent='✅ Aprendizaje superado'; lvEl.className='r-level lv-hi';
+    msgEl.textContent='¡Excelente! Tu puntuación supera el mínimo. Dominás los principales flujos del Single Player HSP.';
+    nivelLabel = 'Aprendizaje superado';
   }
-});
 
-/* =========================================================
-   RESULTADO
-   ========================================================= */
-function finishQuiz(){
-  const total = CONFIG.questions.length;
-  let corretas = 0;
-  const detalhes = [];
-
-  CONFIG.questions.forEach((q, i) => {
-    const acertou = answers[i] === q.correct;
-    if(acertou) corretas++;
-    detalhes.push(`P${i+1}: ${acertou ? 'Correta' : 'Incorreta'}`);
+  // section breakdown
+  let ssHtml = '', gq = 0, detalles = [];
+  CONFIG.sections.forEach(sec => {
+    const qs = sec.questions.length; let okSec = 0;
+    for (let i=0;i<qs;i++){ gq++; if(answered[gq]===true) okSec++; }
+    const ratio = qs>0?okSec/qs:0;
+    const col = ratio>=0.7?'var(--ok)':ratio>=0.5?'#B45309':'var(--err)';
+    ssHtml += `<div class="ss-item"><div class="ss-t">${sec.icon} ${sec.title}</div><div class="ss-s" style="color:${col}">${okSec}/${qs}</div></div>`;
+    detalles.push(`${sec.title}: ${okSec}/${qs}`);
   });
+  document.getElementById('ss-wrap').innerHTML = ssHtml;
 
-  const incorretas = total - corretas;
-  const nota = (corretas / total * 10);
-  const notaFmt = nota.toFixed(1);
+  // hide old status
+  ['sending-box','sent-box','error-box'].forEach(id => document.getElementById(id).classList.remove('show'));
 
-  let resultado, color, bg;
-  if(nota < 7.0){ resultado = 'Reforço/Nivelamento'; color = 'var(--red)'; bg = 'var(--red-bg)'; }
-  else if(nota === 7.0){ resultado = 'Em Aprendizado'; color = 'var(--yellow)'; bg = 'var(--yellow-bg)'; }
-  else { resultado = 'Aprendizado Superado'; color = 'var(--green)'; bg = 'var(--green-bg)'; }
+  document.getElementById('results').classList.add('show');
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
 
-  document.getElementById('screenQuiz').style.display = 'none';
-  document.getElementById('screenResult').style.display = 'block';
-
-  document.getElementById('progressFill') && (document.getElementById('progressFill').style.width = '100%');
-  document.getElementById('scoreBadge').style.background = bg;
-  document.getElementById('scoreBadge').style.color = color;
-  document.getElementById('scoreNum').textContent = notaFmt;
-  const lbl = document.getElementById('resultLabel');
-  lbl.textContent = resultado;
-  lbl.style.background = bg;
-  lbl.style.color = color;
-  document.getElementById('statCorrect').textContent = corretas;
-  document.getElementById('statIncorrect').textContent = incorretas;
-  document.getElementById('statTotal').textContent = total;
-
-  enviarResposta({
-    nome: document.getElementById('inpNome').value.trim(),
-    email: document.getElementById('inpEmail').value.trim(),
-    nota: notaFmt,
-    resultado,
-    corretas,
-    incorretas,
-    total,
-    detalhes: detalhes.join(' | ')
+  // ENVIAR PARA SHEETS
+  sendToSheets({
+    avaliacao: CONFIG.avaliacaoNome,
+    nome:      userName,
+    email:     userEmail,
+    nota:      score.toFixed(1),
+    resultado: nivelLabel,
+    corretas:  ok,
+    incorretas: tot - ok,
+    total:     tot,
+    detalhes:  detalles.join(' | ')
   });
 }
 
-function enviarResposta(dados){
-  const fd = new FormData();
-  fd.append(CONFIG.formEntries.dataHora, new Date().toLocaleString('pt-BR'));
-  fd.append(CONFIG.formEntries.avaliacao, CONFIG.avaliacaoNome);
-  fd.append(CONFIG.formEntries.nome, dados.nome);
-  fd.append(CONFIG.formEntries.email, dados.email);
-  fd.append(CONFIG.formEntries.nota, dados.nota);
-  fd.append(CONFIG.formEntries.resultado, dados.resultado);
-  fd.append(CONFIG.formEntries.corretas, dados.corretas);
-  fd.append(CONFIG.formEntries.incorretas, dados.incorretas);
-  fd.append(CONFIG.formEntries.total, dados.total);
-  fd.append(CONFIG.formEntries.respostasDetalhadas, dados.detalhes);
+function sendToSheets(data) {
+  document.getElementById('sending-box').classList.add('show');
 
-  fetch(CONFIG.formActionUrl, {
+  const agora = new Date();
+  const dataHora = agora.toLocaleString('pt-BR');
+
+  const formData = new FormData();
+  formData.append(FORM_ENTRY_IDS.dataHora,   dataHora);
+  formData.append(FORM_ENTRY_IDS.avaliacao,  data.avaliacao);
+  formData.append(FORM_ENTRY_IDS.nome,       data.nome);
+  formData.append(FORM_ENTRY_IDS.email,      data.email);
+  formData.append(FORM_ENTRY_IDS.nota,       data.nota);
+  formData.append(FORM_ENTRY_IDS.resultado,  data.resultado);
+  formData.append(FORM_ENTRY_IDS.corretas,   data.corretas);
+  formData.append(FORM_ENTRY_IDS.incorretas, data.incorretas);
+  formData.append(FORM_ENTRY_IDS.total,      data.total);
+  formData.append(FORM_ENTRY_IDS.detalhes,   data.detalhes);
+
+  // Timeout de segurança: 10s
+  const timer = setTimeout(function() {
+    document.getElementById('sending-box').classList.remove('show');
+    document.getElementById('sent-box').classList.add('show');
+  }, 10000);
+
+  fetch(SHEETS_URL, {
     method: 'POST',
-    mode: 'no-cors',
-    body: fd
-  }).catch(() => { /* no-cors não permite ler o resultado */ });
-}
-
-/* =========================================================
-   MODO EDITOR
-   ========================================================= */
-document.getElementById('editorBtn').addEventListener('click', () => {
-  if(!editorMode){
-    const pin = prompt('Digite o PIN do Modo Editor:');
-    if(pin !== CONFIG.editorPin){
-      if(pin !== null) alert('PIN incorreto.');
-      return;
-    }
-  }
-  editorMode = !editorMode;
-  document.getElementById('editorBar').style.display = editorMode ? 'block' : 'none';
-
-  if(document.getElementById('screenQuiz').style.display === 'block'){
-    renderQuestion();
-  }
-
-  if(editorMode){
-    document.querySelectorAll('.editable').forEach(el => el.contentEditable = 'true');
-    document.getElementById('qTitle').addEventListener('blur', saveEdits);
-    document.querySelectorAll('.opt-text').forEach(el => el.addEventListener('blur', saveEdits));
-  }
-});
-
-function saveEdits(){
-  const q = CONFIG.questions[currentQ];
-  q.q = document.getElementById('qTitle').textContent.trim();
-  document.querySelectorAll('.opt-text').forEach((el, idx) => {
-    q.options[idx] = el.textContent.trim();
+    mode:   'no-cors',
+    body:   formData
+  })
+  .then(function() {
+    clearTimeout(timer);
+    document.getElementById('sending-box').classList.remove('show');
+    document.getElementById('sent-box').classList.add('show');
+  })
+  .catch(function() {
+    // no-cors sempre cai no catch em alguns browsers — trata como sucesso
+    // pois o script já executou no servidor antes de retornar
+    clearTimeout(timer);
+    document.getElementById('sending-box').classList.remove('show');
+    document.getElementById('sent-box').classList.add('show');
   });
 }
-</script>
 
+function retryEval() {
+  // volta para identificação
+  userName = ''; userEmail = '';
+  document.getElementById('inp-nome').value  = '';
+  document.getElementById('inp-email').value = '';
+  document.getElementById('id-screen').style.display = 'block';
+  document.getElementById('quiz-wrap').style.display = 'none';
+  document.getElementById('results').classList.remove('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══════════════════════════════════════════════
+//  EDITOR
+// ══════════════════════════════════════════════
+function openEditor()  { document.getElementById('overlay').classList.add('open'); editorUnlocked ? renderEditorUI() : renderLogin(); }
+function closeEditor() { document.getElementById('overlay').classList.remove('open'); }
+
+function renderLogin() {
+  document.getElementById('modal-title').textContent = '🔒 Acesso ao Editor';
+  document.getElementById('modal-footer').innerHTML  = '';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="login-box">
+      <h3>Área restrita</h3>
+      <p>Digite a senha de 4 dígitos para acessar o editor.</p>
+      <div class="pin-wrap">
+        <input type="password" maxlength="1" id="p0" inputmode="numeric" oninput="pinMove(0)" onkeydown="pinKey(event,0)">
+        <input type="password" maxlength="1" id="p1" inputmode="numeric" oninput="pinMove(1)" onkeydown="pinKey(event,1)">
+        <input type="password" maxlength="1" id="p2" inputmode="numeric" oninput="pinMove(2)" onkeydown="pinKey(event,2)">
+        <input type="password" maxlength="1" id="p3" inputmode="numeric" oninput="pinMove(3)" onkeydown="pinKey(event,3)">
+      </div>
+      <div class="pin-err" id="pin-err"></div>
+      <button class="btn-login" onclick="checkPin()">Entrar</button>
+    </div>`;
+  setTimeout(()=>{ const p=document.getElementById('p0'); if(p) p.focus(); },100);
+}
+function pinMove(i) {
+  const el=document.getElementById(`p${i}`);
+  if(el&&el.value.length===1&&i<3){ const n=document.getElementById(`p${i+1}`); if(n) n.focus(); }
+  if(i===3&&el&&el.value.length===1) checkPin();
+}
+function pinKey(e,i) {
+  if(e.key==='Backspace'){ const el=document.getElementById(`p${i}`); if(el&&el.value===''&&i>0){ const p=document.getElementById(`p${i-1}`); if(p){p.value='';p.focus();} } }
+  if(e.key==='Enter') checkPin();
+}
+function checkPin() {
+  const pin=[0,1,2,3].map(i=>{ const el=document.getElementById(`p${i}`); return el?el.value:''; }).join('');
+  if(pin===CONFIG.password){ editorUnlocked=true; renderEditorUI(); }
+  else {
+    const err=document.getElementById('pin-err'); if(err) err.textContent='❌ Senha incorreta.';
+    [0,1,2,3].forEach(i=>{ const el=document.getElementById(`p${i}`); if(el) el.value=''; });
+    const p0=document.getElementById('p0'); if(p0) p0.focus();
+  }
+}
+
+function renderEditorUI() { document.getElementById('modal-title').textContent='⚙️ Editor · Single Player HSP'; renderEditorTabs(); }
+
+function renderEditorTabs() {
+  const body=document.getElementById('modal-body'), footer=document.getElementById('modal-footer');
+  const tabs=`<div class="ed-tabs">
+    <button class="ed-tab ${editorTab===0?'active':''}" onclick="editorTab=0;renderEditorTabs()">📝 Preguntas</button>
+    <button class="ed-tab ${editorTab===1?'active':''}" onclick="editorTab=1;renderEditorTabs()">⚙️ Configuración</button>
+  </div>`;
+  body.innerHTML = tabs + (editorTab===0 ? buildQuestionsEditor() : buildSettingsEditor());
+  footer.innerHTML = `<button class="btn-cancel" onclick="closeEditor()">Cancelar</button>
+    <button class="btn-save" onclick="saveEditor()">💾 Guardar y aplicar</button>`;
+}
+
+function buildQuestionsEditor() {
+  let html='';
+  CONFIG.sections.forEach((sec,si)=>{
+    html+=`<div style="margin-bottom:6px;padding:10px 14px;background:linear-gradient(135deg,var(--mp),var(--mp-dark));border-radius:10px;color:#fff;font-size:.85rem;font-weight:700;display:flex;align-items:center;gap:8px">
+      <span>${sec.icon}</span>
+      <input id="sec-title-${si}" value="${esc(sec.title)}" style="background:transparent;border:none;border-bottom:1.5px solid rgba(255,255,255,.5);color:#fff;font-size:.85rem;font-weight:700;outline:none;width:100%;font-family:inherit">
+    </div>`;
+    sec.questions.forEach((qObj,qi)=>{
+      const gq=getGQ(si,qi);
+      html+=`<div class="qed-card" id="qed-${si}-${qi}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div class="qed-num">Pregunta ${gq}</div>
+          <button class="btn-del-q" onclick="deleteQuestion(${si},${qi})">🗑 Eliminar</button>
+        </div>
+        <div class="qed-label">Enunciado</div>
+        <textarea class="qed-input" id="qtxt-${si}-${qi}" rows="2">${esc(qObj.q)}</textarea>
+        <div class="qed-label" style="margin-top:12px">Opciones <span style="color:var(--muted);font-weight:400;font-size:.72rem">(marcá el círculo de la correcta)</span></div>`;
+      qObj.opts.forEach((opt,oi)=>{
+        const isC=oi===qObj.correct;
+        html+=`<div class="opt-row">
+          <input type="radio" class="opt-radio" name="correct-${si}-${qi}" value="${oi}" ${isC?'checked':''} id="cr-${si}-${qi}-${oi}">
+          <label for="cr-${si}-${qi}-${oi}" class="opt-label">Opción ${String.fromCharCode(65+oi)}</label>
+          <input class="qed-input" id="otext-${si}-${qi}-${oi}" value="${esc(opt)}" style="flex:1;min-height:unset;resize:none">
+          ${isC?'<span class="correct-badge">✓ Correcta</span>':''}
+        </div>`;
+      });
+      html+=`<div class="qed-label" style="margin-top:10px">Feedback ✅</div>
+        <textarea class="qed-input" id="fbok-${si}-${qi}" rows="2">${esc(qObj.fb_ok)}</textarea>
+        <div class="qed-label">Feedback ❌</div>
+        <textarea class="qed-input" id="fberr-${si}-${qi}" rows="2">${esc(qObj.fb_err)}</textarea>
+      </div>`;
+    });
+    html+=`<button class="btn-add-q" onclick="addQuestion(${si})">+ Agregar pregunta a "${sec.title}"</button><div style="height:18px"></div>`;
+  });
+  return html;
+}
+
+function buildSettingsEditor() {
+  return `
+    <div class="setting-row">
+      <div class="setting-info"><div class="s-title">Nombre de la evaluación (para la planilla)</div><div class="s-desc">Identifica qué evaluación es en Google Sheets</div></div>
+      <div class="setting-ctrl"><input type="text" id="cfg-avaliacao" value="${esc(CONFIG.avaliacaoNome)}" class="wide"></div>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info"><div class="s-title">Título del encabezado</div><div class="s-desc">Título visible en la página</div></div>
+      <div class="setting-ctrl"><input type="text" id="cfg-title" value="${esc(CONFIG.title)}" class="wide"></div>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info"><div class="s-title">Subtítulo</div><div class="s-desc">Línea secundaria del encabezado</div></div>
+      <div class="setting-ctrl"><input type="text" id="cfg-sub" value="${esc(CONFIG.subtitle)}" class="wide"></div>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info"><div class="s-title">Puntuación mínima (nivelamiento)</div><div class="s-desc">Por debajo de este valor → necesita nivelamiento</div></div>
+      <div class="setting-ctrl"><input type="number" id="cfg-low" value="${CONFIG.thresholdLow}" min="0" max="10" step="0.5"></div>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info"><div class="s-title">Puntuación de aprendizaje</div><div class="s-desc">Igual → en aprendizaje; mayor → superado</div></div>
+      <div class="setting-ctrl"><input type="number" id="cfg-high" value="${CONFIG.thresholdHigh}" min="0" max="10" step="0.5"></div>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info"><div class="s-title">Contraseña del editor</div><div class="s-desc">PIN para acceder al modo editor</div></div>
+      <div class="setting-ctrl"><input type="password" id="cfg-pass" value="${esc(CONFIG.password)}" maxlength="8"></div>
+    </div>`;
+}
+
+function saveEditor() {
+  if (editorTab===0) {
+    CONFIG.sections.forEach((sec,si)=>{
+      const t=document.getElementById(`sec-title-${si}`); if(t) sec.title=t.value;
+      sec.questions.forEach((qObj,qi)=>{
+        const qt=document.getElementById(`qtxt-${si}-${qi}`); if(qt) qObj.q=qt.value;
+        qObj.opts.forEach((_,oi)=>{ const ot=document.getElementById(`otext-${si}-${qi}-${oi}`); if(ot) qObj.opts[oi]=ot.value; });
+        document.querySelectorAll(`input[name="correct-${si}-${qi}"]`).forEach(r=>{ if(r.checked) qObj.correct=parseInt(r.value); });
+        const fo=document.getElementById(`fbok-${si}-${qi}`), fe=document.getElementById(`fberr-${si}-${qi}`);
+        if(fo) qObj.fb_ok=fo.value; if(fe) qObj.fb_err=fe.value;
+      });
+    });
+  } else {
+    const av=document.getElementById('cfg-avaliacao'),t=document.getElementById('cfg-title'),s=document.getElementById('cfg-sub'),lo=document.getElementById('cfg-low'),hi=document.getElementById('cfg-high'),pw=document.getElementById('cfg-pass');
+    if(av) CONFIG.avaliacaoNome   = av.value;
+    if(t)  CONFIG.title           = t.value;
+    if(s)  CONFIG.subtitle        = s.value;
+    if(lo) CONFIG.thresholdLow    = parseFloat(lo.value);
+    if(hi) CONFIG.thresholdHigh   = parseFloat(hi.value);
+    if(pw&&pw.value) CONFIG.password = pw.value;
+  }
+  closeEditor();
+  if (document.getElementById('quiz-wrap').style.display !== 'none') buildQuiz();
+  showToast('✅ Cambios guardados y aplicados');
+}
+
+function addQuestion(si) {
+  CONFIG.sections[si].questions.push({ q:"Nueva pregunta...", opts:["Opción A","Opción B","Opción C","Opción D"], correct:0, fb_ok:"✅ ¡Correcto! Explica por qué esta es la respuesta correcta.", fb_err:"❌ Incorrecto. Explica cuál es la respuesta correcta." });
+  renderEditorTabs();
+  setTimeout(()=>{ const qi=CONFIG.sections[si].questions.length-1; const el=document.getElementById(`qed-${si}-${qi}`); if(el) el.scrollIntoView({behavior:'smooth',block:'center'}); },100);
+}
+function deleteQuestion(si,qi) {
+  if(CONFIG.sections[si].questions.length<=1){ showToast('⚠️ La sección debe tener al menos 1 pregunta'); return; }
+  if(!confirm('¿Eliminar esta pregunta?')) return;
+  CONFIG.sections[si].questions.splice(qi,1); renderEditorTabs();
+}
+
+function getGQ(si,qi){ let n=0; for(let i=0;i<si;i++) n+=CONFIG.sections[i].questions.length; return n+qi+1; }
+function esc(str){ return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800); }
+
+document.getElementById('overlay').addEventListener('click',function(e){ if(e.target===this) closeEditor(); });
+</script>
 </body>
 </html>
