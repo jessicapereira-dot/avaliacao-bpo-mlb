@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avaliação - Pagamentos OFF Boleto/PEC</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root{
+    --blue:#009EE3; --blue-dark:#007BB5; --blue-light:#E8F7FD; --navy:#003D5C;
+    --green:#00A650; --green-bg:#E6F7EF;
+    --red:#F23D4F; --red-bg:#FDEEF0;
+    --yellow:#F59E0B; --yellow-bg:#FFF8E1;
+    --bg:#F0F9FF; --text:#1A1A2E; --text2:#6B7280; --border:#E0E7EF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding-top:88px;
+    min-height:100vh;
+  }
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    height:72px;
+    background:linear-gradient(135deg,var(--blue) 0%,var(--navy) 100%);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 24px;
+    box-shadow:0 2px 12px rgba(0,61,92,.25);
+  }
+  .header-left{display:flex; align-items:center; gap:14px;}
+  .logo-circle{
+    width:44px; height:44px; border-radius:50%;
+    background:#fff; display:flex; align-items:center; justify-content:center;
+    font-size:22px; flex-shrink:0;
+  }
+  .header-titles h1{color:#fff; font-size:16px; font-weight:700; line-height:1.2;}
+  .header-titles p{color:#DCEFFB; font-size:12px; font-weight:500;}
+  #editorBtn{
+    background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.35);
+    padding:8px 14px; border-radius:10px; font-family:'Inter',sans-serif; font-size:13px;
+    font-weight:600; cursor:pointer; white-space:nowrap;
+  }
+  #editorBtn:hover{background:rgba(255,255,255,.25);}
+
+  .wrap{max-width:860px; margin:0 auto; padding:32px 20px 60px;}
+
+  .card{
+    background:#fff; border-radius:14px;
+    box-shadow:0 4px 24px rgba(0,158,227,.10);
+    padding:36px 32px;
+  }
+
+  #screenId .card{max-width:480px; margin:40px auto 0;}
+  #screenId h2{font-size:22px; margin-bottom:6px;}
+  #screenId p{color:var(--text2); font-size:14px; margin-bottom:24px;}
+  .field{margin-bottom:18px;}
+  .field label{display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:var(--text);}
+  .field input{
+    width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:10px;
+    font-family:'Inter',sans-serif; font-size:14px; background:#F9FBFC;
+  }
+  .field input:focus{outline:none; border-color:var(--blue); background:#fff;}
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    background:var(--blue); color:#fff; border:none; padding:13px 26px;
+    border-radius:10px; font-family:'Inter',sans-serif; font-size:15px; font-weight:700;
+    cursor:pointer; width:100%; transition:background .15s;
+  }
+  .btn:hover{background:var(--blue-dark);}
+  .btn:disabled{background:#B9C4CC; cursor:not-allowed;}
+  .btn-outline{
+    background:#fff; color:var(--blue); border:1.5px solid var(--blue);
+  }
+  .btn-outline:hover{background:var(--blue-light);}
+
+  #screenQuiz{display:none;}
+  .progress-bar{
+    height:8px; background:var(--border); border-radius:6px; overflow:hidden; margin-bottom:22px;
+  }
+  .progress-fill{height:100%; background:var(--blue); border-radius:6px; transition:width .3s;}
+  .q-meta{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .q-meta span{font-size:13px; font-weight:600; color:var(--text2);}
+  .q-title{font-size:18px; font-weight:700; margin-bottom:22px; line-height:1.4;}
+
+  .option{
+    background:#F5F5F5; border:1.5px solid transparent; border-radius:12px;
+    padding:14px 16px; margin-bottom:12px; cursor:pointer;
+    font-size:14.5px; font-weight:500; transition:.15s;
+    display:flex; align-items:center; gap:12px;
+  }
+  .option:hover{background:#EFEFEF;}
+  .option.selected{background:var(--blue-light); border-color:var(--blue); font-weight:600;}
+  .option .dot{
+    width:18px; height:18px; border-radius:50%; border:2px solid #C7CDD3; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .option.selected .dot{border-color:var(--blue); background:var(--blue);}
+  .option.selected .dot::after{content:''; width:8px; height:8px; border-radius:50%; background:#fff;}
+
+  .quiz-actions{display:flex; justify-content:flex-end; margin-top:28px;}
+  .quiz-actions .btn{width:auto; padding:13px 30px;}
+
+  #screenResult{display:none;}
+  #screenResult .card{text-align:center;}
+  .score-badge{
+    width:120px; height:120px; border-radius:50%; margin:0 auto 20px;
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    font-weight:800;
+  }
+  .score-badge .num{font-size:34px; line-height:1;}
+  .score-badge .den{font-size:13px; opacity:.8;}
+  .result-label{
+    display:inline-block; padding:8px 18px; border-radius:20px; font-weight:700; font-size:14px;
+    margin-bottom:22px;
+  }
+  .stats{display:flex; justify-content:center; gap:28px; margin:22px 0 30px; flex-wrap:wrap;}
+  .stat{text-align:center;}
+  .stat .n{font-size:24px; font-weight:800;}
+  .stat .l{font-size:12px; color:var(--text2); font-weight:600; text-transform:uppercase; letter-spacing:.03em;}
+  #screenResult .btn{max-width:280px; margin:0 auto;}
+
+  .editable{outline:1px dashed var(--blue); outline-offset:2px; border-radius:4px; cursor:text;}
+  #editorBar{
+    display:none; background:var(--yellow-bg); border:1px solid var(--yellow);
+    color:#7A5200; padding:10px 16px; border-radius:10px; font-size:13px; font-weight:600;
+    margin-bottom:18px; text-align:center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="logo-circle">🧾</div>
+    <div class="header-titles">
+      <h1>Avaliação - Pagamentos OFF Boleto/PEC</h1>
+      <p>MLB · FOS MP Operações</p>
+    </div>
+  </div>
+  <button id="editorBtn">⚙️ Modo Editor</button>
+</header>
+
+<div id="screenId" class="wrap">
+  <div class="card">
+    <h2>Antes de começar</h2>
+    <p>Preencha seus dados para iniciarmos a avaliação.</p>
+    <div class="field">
+      <label for="inpNome">Nome completo</label>
+      <input type="text" id="inpNome" placeholder="Digite seu nome">
+    </div>
+    <div class="field">
+      <label for="inpEmail">E-mail</label>
+      <input type="email" id="inpEmail" placeholder="seuemail@empresa.com">
+    </div>
+    <button class="btn" id="btnStart">Iniciar Avaliação →</button>
+  </div>
+</div>
+
+<div id="screenQuiz" class="wrap">
+  <div id="editorBar">Modo Editor ativo — clique em uma pergunta ou opção para editar o texto.</div>
+  <div class="card">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="q-meta">
+      <span id="qCounter">Pergunta 1 de 15</span>
+    </div>
+    <div class="q-title" id="qTitle"></div>
+    <div id="qOptions"></div>
+    <div class="quiz-actions">
+      <button class="btn" id="btnNext" disabled>Próximo →</button>
+    </div>
+  </div>
+</div>
+
+<div id="screenResult" class="wrap">
+  <div class="card">
+    <div class="score-badge" id="scoreBadge">
+      <div class="num" id="scoreNum">0.0</div>
+      <div class="den">/ 10</div>
+    </div>
+    <div class="result-label" id="resultLabel">—</div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="statCorrect" style="color:var(--green)">0</div><div class="l">Corretas</div></div>
+      <div class="stat"><div class="n" id="statIncorrect" style="color:var(--red)">0</div><div class="l">Incorretas</div></div>
+      <div class="stat"><div class="n" id="statTotal">0</div><div class="l">Total</div></div>
+    </div>
+    <a href="index.html" class="btn btn-outline" style="text-decoration:none; display:inline-flex;">🏠 Voltar ao início</a>
+  </div>
+</div>
+
+<script>
+const CONFIG = {
+  avaliacaoNome: "Pagamentos OFF Boleto/PEC - MLB",
+
+  formActionUrl: "https://docs.google.com/forms/u/0/d/e/1FAIpQLSfPhCyKWzRRf1PxE-MO6qxmv436UxZfBAmVe7WY0tmY0_YCGg/formResponse",
+
+  formEntries: {
+    dataHora:            "entry.2017782703",
+    avaliacao:           "entry.78177913",
+    nome:                "entry.1818530692",
+    email:               "entry.1056222960",
+    nota:                "entry.48293095",
+    resultado:           "entry.381965002",
+    corretas:            "entry.144582871",
+    incorretas:          "entry.1335730000",
+    total:               "entry.891321817",
+    respostasDetalhadas: "entry.407031098"
+  },
+
+  editorPin: "1234",
+
+  questions: [
+    {
+      q: "Qual é a principal diferença entre pagamento com cartão de crédito e pagamento Off?",
+      options: [
+        "No pagamento Off, o usuário paga com cartão de crédito diretamente pela plataforma",
+        "No pagamento com cartão, o usuário realiza a compra pela plataforma do Mercado Pago (fluxo adquirência); no pagamento Off, ele faz transferência bancária ou paga em dinheiro por meio de uma entidade extra-bancária",
+        "Pagamento Off só existe para compras internacionais",
+        "Não há diferença, ambos usam o mesmo fluxo de liquidação"
+      ],
+      correct: 1
+    },
+    {
+      q: "Qual é o prazo de liquidação dos boletos de pagamento do Mercado Livre e dos boletos PEC-Caixa?",
+      options: [
+        "Imediato",
+        "2 horas ou até o fim do dia",
+        "5 dias úteis",
+        "30 dias"
+      ],
+      correct: 1
+    },
+    {
+      q: "O que é um Fondeo?",
+      options: [
+        "A criação de um pagamento novo, digitando manualmente todos os dados",
+        "O cancelamento definitivo de uma transação",
+        "Acreditar de forma imediata um valor que já está dentro dos sistemas do Mercado Pago, mas não está atrelado a nenhum usuário",
+        "Um tipo de boleto exclusivo para pessoa jurídica"
+      ],
+      correct: 2
+    },
+    {
+      q: "Por que a ação de Pagamento Manual não pode mais ser executada, salvo exceções aprovadas pela Vertical de Conciliação?",
+      options: [
+        "Porque é mais lenta que o Fondeo",
+        "Porque sempre gera uma diferença no contábil",
+        "Porque só funciona para boletos Caixa",
+        "Porque exige aprovação do usuário"
+      ],
+      correct: 1
+    },
+    {
+      q: "Em um boleto cuja linha digitável começa com o nº do banco 341, qual é o código de identificação utilizado?",
+      options: [
+        "Reference ID",
+        "NSU",
+        "Linha digitável completa",
+        "CPF do pagador"
+      ],
+      correct: 1
+    },
+    {
+      q: "Pelo One Source, quais são as 3 formas de identificar uma transação de boleto/PEC?",
+      options: [
+        "Apenas pelo CPF do usuário",
+        "Reference Id, Referência NSU e Referência Pago Off",
+        "Apenas pelo valor da transação",
+        "Somente pelo nome do beneficiário"
+      ],
+      correct: 1
+    },
+    {
+      q: "No Admin Offline Payments, após localizar o pagamento, quais passos devem ser seguidos para aplicar o fondeo?",
+      options: [
+        "Clicar no ícone chave, inserir o Cust Id que deve receber o fondeo, clicar em FONDEAR e depois confirmar",
+        "Apenas clicar em Cancelar",
+        "Enviar um e-mail para o usuário sem nenhuma ação no sistema",
+        "Criar um novo pagamento manual"
+      ],
+      correct: 0
+    },
+    {
+      q: "Quando o status é 'potencial_fondeo' mas não aparece a chave de fondeo, o que deve ser feito?",
+      options: [
+        "Ignorar o caso e devolver para a cola de origem",
+        "Aplicar um Pagamento Manual",
+        "Selecionar o pagamento, clicar em ÂNCORA e aguardar aprovação do supervisor",
+        "Cancelar a transação imediatamente"
+      ],
+      correct: 2
+    },
+    {
+      q: "Quando é necessário fazer a 'Subida de Arquivo Default'?",
+      options: [
+        "Sempre que o usuário solicitar reembolso",
+        "Quando há conciliação do pagamento, mas a transação não é encontrada no Admin",
+        "Quando o pagamento está duplicado",
+        "Sempre antes de aplicar qualquer fondeo"
+      ],
+      correct: 1
+    },
+    {
+      q: "No resultado de uma consulta de conciliação, o que significa o status 'NOT RECONCILED'?",
+      options: [
+        "A liquidação foi efetuada normalmente",
+        "Não existe nenhuma informação sobre o pagamento",
+        "O valor não entrou no MP e o usuário deve verificar com a entidade pagadora",
+        "O pagamento foi cancelado pelo usuário"
+      ],
+      correct: 2
+    },
+    {
+      q: "No caso de Pagamento Cruzado, antes de tomar qualquer ação, o que deve ser feito?",
+      options: [
+        "Aplicar o fondeo imediatamente",
+        "Consultar a Vertical antes de qualquer ação",
+        "Cancelar a conta do usuário que recebeu o valor",
+        "Aplicar um Pagamento Manual para corrigir"
+      ],
+      correct: 1
+    },
+    {
+      q: "Qual é a diferença principal entre Retenção via Transfer V2 e Retenção via Motor de Deuda?",
+      options: [
+        "Não há diferença, são exatamente o mesmo processo",
+        "O Transfer V2 usa 'Crear Processo' com Tipo de Processo Retenção; o Motor de Deuda tem sua própria tela de Processo com Monto de retenção",
+        "O Motor de Deuda só serve para transferências entre contas de mesma titularidade",
+        "O Transfer V2 nunca precisa de aprovação"
+      ],
+      correct: 1
+    },
+    {
+      q: "A Transferência via Transfer V2 só é permitida entre quais contas?",
+      options: [
+        "Contas de qualquer titularidade, sem restrição",
+        "Apenas contas verificadas pelo time de Payers",
+        "Contas de mesma titularidade (mesmo documento CPF/CNPJ)",
+        "Somente contas internas Anonymous"
+      ],
+      correct: 2
+    },
+    {
+      q: "Quais informações o comprovante de pagamento deve conter para a Validação Pré-Fondeo?",
+      options: [
+        "Apenas o valor da transação",
+        "Somente o CPF do usuário",
+        "Apenas a linha digitável",
+        "Data da transação, valor, linha digitável, nome do beneficiário, nome do pagador e instituição emissora"
+      ],
+      correct: 3
+    },
+    {
+      q: "Sobre a devolução (Refund) de boleto, qual regra é válida apenas para boletos Marketplace (não vale para boletos de adição de dinheiro)?",
+      options: [
+        "O usuário pode escolher receber o estorno na conta MP ou em uma conta externa",
+        "O estorno sempre vai para uma conta Anonymous",
+        "O estorno é sempre feito via Pagamento Manual",
+        "O prazo de devolução é sempre de 90 dias"
+      ],
+      correct: 0
+    }
+  ]
+};
+
+let currentQ = 0;
+let selectedOption = null;
+const answers = new Array(CONFIG.questions.length).fill(null);
+let editorMode = false;
+
+document.getElementById('btnStart').addEventListener('click', () => {
+  const nome = document.getElementById('inpNome').value.trim();
+  const email = document.getElementById('inpEmail').value.trim();
+  if(!nome || !email){
+    alert('Por favor, preencha nome e e-mail para continuar.');
+    return;
+  }
+  document.getElementById('screenId').style.display = 'none';
+  document.getElementById('screenQuiz').style.display = 'block';
+  renderQuestion();
+});
+
+function renderQuestion(){
+  const total = CONFIG.questions.length;
+  const q = CONFIG.questions[currentQ];
+
+  document.getElementById('progressFill').style.width = ((currentQ)/total*100) + '%';
+  document.getElementById('qCounter').textContent = `Pergunta ${currentQ+1} de ${total}`;
+  document.getElementById('qTitle').textContent = q.q;
+  if(editorMode) document.getElementById('qTitle').classList.add('editable');
+
+  const optsDiv = document.getElementById('qOptions');
+  optsDiv.innerHTML = '';
+  selectedOption = null;
+
+  q.options.forEach((optText, idx) => {
+    const el = document.createElement('div');
+    el.className = 'option';
+    el.innerHTML = `<div class="dot"></div><div class="opt-text${editorMode ? ' editable' : ''}">${optText}</div>`;
+    el.addEventListener('click', (e) => {
+      if(editorMode && e.target.classList.contains('opt-text')) return;
+      document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedOption = idx;
+      document.getElementById('btnNext').disabled = false;
+    });
+    optsDiv.appendChild(el);
+  });
+
+  document.getElementById('btnNext').disabled = true;
+  document.getElementById('btnNext').textContent = (currentQ === total - 1) ? 'Finalizar →' : 'Próximo →';
+}
+
+document.getElementById('btnNext').addEventListener('click', () => {
+  if(selectedOption === null) return;
+  answers[currentQ] = selectedOption;
+
+  if(currentQ < CONFIG.questions.length - 1){
+    currentQ++;
+    renderQuestion();
+  } else {
+    finishQuiz();
+  }
+});
+
+function finishQuiz(){
+  const total = CONFIG.questions.length;
+  let corretas = 0;
+  const detalhes = [];
+
+  CONFIG.questions.forEach((q, i) => {
+    const acertou = answers[i] === q.correct;
+    if(acertou) corretas++;
+    detalhes.push(`P${i+1}: ${acertou ? 'Correta' : 'Incorreta'}`);
+  });
+
+  const incorretas = total - corretas;
+  const nota = (corretas / total * 10);
+  const notaFmt = nota.toFixed(1);
+
+  let resultado, color, bg;
+  if(nota < 7.0){ resultado = 'Reforço/Nivelamento'; color = 'var(--red)'; bg = 'var(--red-bg)'; }
+  else if(nota === 7.0){ resultado = 'Em Aprendizado'; color = 'var(--yellow)'; bg = 'var(--yellow-bg)'; }
+  else { resultado = 'Aprendizado Superado'; color = 'var(--green)'; bg = 'var(--green-bg)'; }
+
+  document.getElementById('screenQuiz').style.display = 'none';
+  document.getElementById('screenResult').style.display = 'block';
+
+  document.getElementById('scoreBadge').style.background = bg;
+  document.getElementById('scoreBadge').style.color = color;
+  document.getElementById('scoreNum').textContent = notaFmt;
+  const lbl = document.getElementById('resultLabel');
+  lbl.textContent = resultado;
+  lbl.style.background = bg;
+  lbl.style.color = color;
+  document.getElementById('statCorrect').textContent = corretas;
+  document.getElementById('statIncorrect').textContent = incorretas;
+  document.getElementById('statTotal').textContent = total;
+
+  enviarResposta({
+    nome: document.getElementById('inpNome').value.trim(),
+    email: document.getElementById('inpEmail').value.trim(),
+    nota: notaFmt,
+    resultado,
+    corretas,
+    incorretas,
+    total,
+    detalhes: detalhes.join(' | ')
+  });
+}
+
+function enviarResposta(dados){
+  const fd = new FormData();
+  fd.append(CONFIG.formEntries.dataHora, new Date().toLocaleString('pt-BR'));
+  fd.append(CONFIG.formEntries.avaliacao, CONFIG.avaliacaoNome);
+  fd.append(CONFIG.formEntries.nome, dados.nome);
+  fd.append(CONFIG.formEntries.email, dados.email);
+  fd.append(CONFIG.formEntries.nota, dados.nota);
+  fd.append(CONFIG.formEntries.resultado, dados.resultado);
+  fd.append(CONFIG.formEntries.corretas, dados.corretas);
+  fd.append(CONFIG.formEntries.incorretas, dados.incorretas);
+  fd.append(CONFIG.formEntries.total, dados.total);
+  fd.append(CONFIG.formEntries.respostasDetalhadas, dados.detalhes);
+
+  fetch(CONFIG.formActionUrl, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: fd
+  }).catch(() => { /* no-cors não permite ler o resultado */ });
+}
+
+document.getElementById('editorBtn').addEventListener('click', () => {
+  if(!editorMode){
+    const pin = prompt('Digite o PIN do Modo Editor:');
+    if(pin !== CONFIG.editorPin){
+      if(pin !== null) alert('PIN incorreto.');
+      return;
+    }
+  }
+  editorMode = !editorMode;
+  document.getElementById('editorBar').style.display = editorMode ? 'block' : 'none';
+
+  if(document.getElementById('screenQuiz').style.display === 'block'){
+    renderQuestion();
+  }
+
+  if(editorMode){
+    document.querySelectorAll('.editable').forEach(el => el.contentEditable = 'true');
+    document.getElementById('qTitle').addEventListener('blur', saveEdits);
+    document.querySelectorAll('.opt-text').forEach(el => el.addEventListener('blur', saveEdits));
+  }
+});
+
+function saveEdits(){
+  const q = CONFIG.questions[currentQ];
+  q.q = document.getElementById('qTitle').textContent.trim();
+  document.querySelectorAll('.opt-text').forEach((el, idx) => {
+    q.options[idx] = el.textContent.trim();
+  });
+}
+</script>
+
+</body>
+</html>
