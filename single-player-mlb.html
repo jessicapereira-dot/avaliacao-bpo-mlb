@@ -250,158 +250,157 @@ const CONFIG = {
   editorPin: "1234",
 
   questions: [
-    {
-      q: "O que caracteriza uma operação Single Player?",
-      options: [
-        "Operações de autosserviço de vendas dentro do aplicativo do Mercado Pago, sem necessidade de intermediador ou vendedor",
-        "Vendas realizadas exclusivamente por um vendedor físico",
-        "Transações que exigem aprovação manual de um caixa",
-        "Pagamentos processados apenas fora do aplicativo"
-      ],
-      correct: 0
-    },
-    {
-      q: "Quais produtos fazem parte do fluxo geral do Single Player?",
-      options: [
-        "Recarga de celular, produtos digitais, pagamento de serviços, recarga de antena e recarga de cartão de transporte",
-        "Somente recarga de celular e produtos digitais",
-        "Apenas pagamentos de boletos bancários",
-        "Exclusivamente recargas de antena"
-      ],
-      correct: 0
-    },
-    {
-      q: "No fluxo de prazos do Single Player, quando o pagamento (D) é considerado 'Pagamento Conciliado'?",
-      options: [
-        "No mesmo dia (D)",
-        "D+1",
-        "D+7",
-        "D+30"
-      ],
-      correct: 1
-    },
-    {
-      q: "Depois de conciliado, em quanto tempo o pagamento passa a ser considerado 'Acreditado'?",
-      options: [
-        "Imediatamente",
-        "24 horas",
-        "48 horas",
-        "6 horas"
-      ],
-      correct: 3
-    },
-    {
-      q: "No status 'Pendente/Pending' do Admin Single Player, o que acontece com o dinheiro?",
-      options: [
-        "Dinheiro devolvido",
-        "Dinheiro retido",
-        "Dinheiro liberado",
-        "Dinheiro creditado ao provedor"
-      ],
-      correct: 1
-    },
-    {
-      q: "Um pagamento está 'Aprovado em One Source', 'Inconsistente no Admin SP' e NÃO está liquidado no Simetrik. Qual ação deve ser tomada?",
-      options: [
-        "CANCELAR",
-        "CAPTURAR",
-        "REFUND",
-        "Nenhuma ação, aguardar"
-      ],
-      correct: 2
-    },
-    {
-      q: "Um pagamento está 'Pendente em One Source', 'Inconsistente no Admin SP' e ESTÁ liquidado no Simetrik. Qual ação deve ser tomada?",
-      options: [
-        "CAPTURAR",
-        "CANCELAR",
-        "REFUND",
-        "Encaminhar para Terceros"
-      ],
-      correct: 0
-    },
-    {
-      q: "O que é a ferramenta Cx One?",
-      options: [
-        "Sistema de conciliação bancária",
-        "Ferramenta pela qual recebemos um caso de Atendimento ao Cliente e fornecemos a resposta",
-        "Plataforma de emissão de boletos",
-        "Ferramenta de gestão de estoque"
-      ],
-      correct: 1
-    },
-    {
-      q: "Qual role/perfil deve ser solicitado para operar o Admin de Single Player?",
-      options: [
-        "Admin Global - Full Access",
-        "Perfil de Desenvolvedor - Read Only",
-        "Admin Nuevo Mundo - Asignación de roles MP - ADMIN_SP_WRITE & SINGLEPLAYER - SINGLEPLAYER-ADMIN_SP_READ",
-        "Usuário Financeiro - Aprovador"
-      ],
-      correct: 2
-    },
-    {
-      q: "Onde buscamos uma operação individual no Admin Single Player?",
-      options: [
-        "Transações > Vista Massiva",
-        "Transações > Vista Rápida",
-        "Relatórios > Exportar",
-        "Configurações > Usuários"
-      ],
-      correct: 1
-    },
-    {
-      q: "Onde buscamos e executamos ações em várias operações ao mesmo tempo no Admin Single Player?",
-      options: [
-        "Transações > Vista Rápida",
-        "Backlog > Gdoc",
-        "Simetrik > Gestão Transacional",
-        "Transações > Vista Massiva"
-      ],
-      correct: 3
-    },
-    {
-      q: "No Simetrik (SMKT V2), o que significa o TX_REC_STATUS 'Reconciled'?",
-      options: [
-        "A devolução pode ocorrer normalmente",
-        "Não se deve devolver o pagamento; responder com o Script 04",
-        "Encaminhar o caso para o time interno",
-        "O pagamento deve ser cancelado imediatamente"
-      ],
-      correct: 1
-    },
-    {
-      q: "No Simetrik (SMKT V2), quando o TX_REC_STATUS aparece como 'null/em branco', qual é a ação correta?",
-      options: [
-        "Aplicar refund automaticamente",
-        "Aprovar o pagamento sem análise",
-        "Encaminhar o caso para os internos responsáveis (ex: Jéssica Pereira / Gleice)",
-        "Fechar o caso sem resposta"
-      ],
-      correct: 2
-    },
-    {
-      q: "O que é o 'Transaction Intent'?",
-      options: [
-        "Um tipo de cartão de crédito exclusivo do Mercado Pago",
-        "Uma máscara de pagamento por trás da transação, identificada por um código alfanumérico, usada quando não é possível localizar o payment normalmente",
-        "Um relatório financeiro mensal",
-        "Um status de pagamento cancelado"
-      ],
-      correct: 1
-    },
-    {
-      q: "Em caso de pagamento duplicado, quando ambos os pagamentos estão 'Approved' e 'Provider Approved', qual é a ação correta?",
-      options: [
-        "Cancelar ambos os pagamentos",
-        "Capturar ambos os pagamentos",
-        "Realizar a devolução de um dos pagamentos",
-        "Não realizar nenhuma ação"
-      ],
-      correct: 2
-    }
-  ]
-};
+  {
+    "q": "O que caracteriza uma operação Single Player?",
+    "options": [
+      "Operações de autosserviço de vendas dentro do aplicativo do Mercado Pago, sem necessidade de intermediador ou vendedor",
+      "Vendas realizadas exclusivamente por um vendedor físico",
+      "Transações que exigem aprovação manual de um caixa",
+      "Pagamentos processados apenas fora do aplicativo"
+    ],
+    "correct": 0
+  },
+  {
+    "q": "Quais produtos fazem parte do fluxo geral do Single Player?",
+    "options": [
+      "Recarga de celular, produtos digitais, pagamento de serviços, recarga de antena e recarga de cartão de transporte",
+      "Somente recarga de celular e produtos digitais",
+      "Apenas pagamentos de boletos bancários",
+      "Exclusivamente recargas de antena"
+    ],
+    "correct": 0
+  },
+  {
+    "q": "No fluxo de prazos do Single Player, quando o pagamento é considerado 'Pagamento Conciliado'?",
+    "options": [
+      "No mesmo dia (D)",
+      "D+1",
+      "D+7",
+      "D+30"
+    ],
+    "correct": 1
+  },
+  {
+    "q": "Depois de conciliado, em quanto tempo o pagamento passa a ser considerado 'Acreditado'?",
+    "options": [
+      "Imediatamente",
+      "24 horas",
+      "48 horas",
+      "6 horas"
+    ],
+    "correct": 3
+  },
+  {
+    "q": "No status 'Pendente/Pending' do Admin Single Player, o que acontece com o dinheiro?",
+    "options": [
+      "Dinheiro devolvido",
+      "Dinheiro retido",
+      "Dinheiro liberado",
+      "Dinheiro creditado ao provedor"
+    ],
+    "correct": 1
+  },
+  {
+    "q": "Um pagamento está 'Aprovado em One Source', 'Inconsistente no Admin SP' e NÃO está liquidado no Simetrik. Qual ação deve ser tomada?",
+    "options": [
+      "CANCELAR",
+      "CAPTURAR",
+      "REFUND",
+      "Nenhuma ação, aguardar"
+    ],
+    "correct": 2
+  },
+  {
+    "q": "Um pagamento está 'Pendente em One Source', 'Inconsistente no Admin SP' e ESTÁ liquidado no Simetrik. Qual ação deve ser tomada?",
+    "options": [
+      "CAPTURAR",
+      "CANCELAR",
+      "REFUND",
+      "Encaminhar para Terceros"
+    ],
+    "correct": 0
+  },
+  {
+    "q": "Quando o status do pagamento é AUTHORIZED e o provider Rejected/pending trata-se:",
+    "options": [
+      "Um pagamento em conciliação",
+      "Uma transação que não teve liquidação, e precisamos que ela volte para a conta do usuário",
+      "Plataforma de emissão de boletos",
+      "Esse status não existe nos pagamentos"
+    ],
+    "correct": 1
+  },
+  {
+    "q": "Se não encontramos as informações do pago por payment, devemos buscar por:",
+    "options": [
+      "Refund ID",
+      "E2E",
+      "Transaction Intent (TI)",
+      "Usuário"
+    ],
+    "correct": 2
+  },
+  {
+    "q": "Onde buscamos uma operação individual no Admin Single Player?",
+    "options": [
+      "Transações > Vista Massiva",
+      "Transações > Vista Rápida",
+      "Relatórios > Exportar",
+      "Configurações > Usuários"
+    ],
+    "correct": 1
+  },
+  {
+    "q": "Onde buscamos e executamos ações em várias operações ao mesmo tempo no Admin Single Player?",
+    "options": [
+      "Transações > Vista Rápida",
+      "Backlog > Gdoc",
+      "Simetrik > Gestão Transacional",
+      "Transações > Vista Massiva"
+    ],
+    "correct": 3
+  },
+  {
+    "q": "No Simetrik (SMKT V2), o que significa o TX_REC_STATUS 'Reconciled'?",
+    "options": [
+      "A devolução pode ocorrer normalmente",
+      "Não se deve devolver o pagamento",
+      "Encaminhar o caso para o time interno",
+      "O pagamento deve ser cancelado imediatamente"
+    ],
+    "correct": 1
+  },
+  {
+    "q": "No Simetrik (SMKT V2), quando o TX_REC_STATUS aparece como 'null/em branco', qual é a ação correta?",
+    "options": [
+      "Aplicar refund automaticamente",
+      "Aprovar o pagamento sem análise",
+      "Consultar com a equipe de TMO através dos canais de slack",
+      "Fechar o caso sem resposta"
+    ],
+    "correct": 2
+  },
+  {
+    "q": "O que é o 'Transaction Intent'?",
+    "options": [
+      "Um tipo de cartão de crédito exclusivo do Mercado Pago",
+      "Uma máscara de pagamento por trás da transação, identificada por um código alfanumérico, usada quando não é possível localizar o payment normalmente",
+      "Um relatório financeiro mensal",
+      "Um status de pagamento cancelado"
+    ],
+    "correct": 1
+  },
+  {
+    "q": "Em caso de pagamento duplicado, quando ambos os pagamentos estão 'Approved' e 'Provider Approved', qual é a ação correta?",
+    "options": [
+      "Cancelar ambos os pagamentos",
+      "Capturar ambos os pagamentos",
+      "Realizar a devolução de um dos pagamentos",
+      "Não realizar nenhuma ação"
+    ],
+    "correct": 2
+  }
+]
 
 /* =========================================================
    ESTADO
