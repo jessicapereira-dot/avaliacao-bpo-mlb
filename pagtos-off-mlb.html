@@ -1,662 +1,637 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Avaliação — Pagos OFF HSP</title>
+<title>Avaliação - Pagamentos OFF Boleto/PEC</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: #F0F9FF; min-height: 100vh; padding-bottom: 60px; }
 
-  /* ── CABEÇALHO FIXO ── */
-  .hdr { background: linear-gradient(135deg, #009ee3 0%, #003D5C 100%); padding: 28px 40px; display: flex; align-items: center; justify-content: space-between; gap: 16px; box-shadow: 0 4px 20px rgba(0,61,92,.25); }
-  .hdr-left { display: flex; align-items: center; gap: 18px; }
-  .hdr-logo { width: 52px; height: 52px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; box-shadow: 0 2px 12px rgba(0,0,0,.15); }
-  .hdr h1 { color: #fff; font-size: 1.4rem; font-weight: 800; letter-spacing: -.5px; }
-  .hdr p { color: rgba(255,255,255,.78); font-size: .83rem; margin-top: 3px; font-weight: 500; }
-  .btn-editor { background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.35); color: #fff; padding: 9px 18px; border-radius: 9px; cursor: pointer; font-size: .82rem; font-weight: 600; display: flex; align-items: center; gap: 7px; transition: background .18s; white-space: nowrap; flex-shrink: 0; }
-  .btn-editor:hover { background: rgba(255,255,255,.25); }
+  :root{
+    --blue:#009EE3; --blue-dark:#007BB5; --blue-light:#E8F7FD; --navy:#003D5C;
+    --green:#00A650; --green-bg:#E6F7EF;
+    --red:#F23D4F; --red-bg:#FDEEF0;
+    --yellow:#F59E0B; --yellow-bg:#FFF8E1;
+    --bg:#F0F9FF; --text:#1A1A2E; --text2:#6B7280; --border:#E0E7EF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding-top:88px;
+    min-height:100vh;
+  }
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    height:72px;
+    background:linear-gradient(135deg,var(--blue) 0%,var(--navy) 100%);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 24px;
+    box-shadow:0 2px 12px rgba(0,61,92,.25);
+  }
+  .header-left{display:flex; align-items:center; gap:14px;}
+  .logo-circle{
+    width:44px; height:44px; border-radius:50%;
+    background:#fff; display:flex; align-items:center; justify-content:center;
+    font-size:22px; flex-shrink:0;
+  }
+  .header-titles h1{color:#fff; font-size:16px; font-weight:700; line-height:1.2;}
+  .header-titles p{color:#DCEFFB; font-size:12px; font-weight:500;}
+  #editorBtn{
+    background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.35);
+    padding:8px 14px; border-radius:10px; font-family:'Inter',sans-serif; font-size:13px;
+    font-weight:600; cursor:pointer; white-space:nowrap;
+  }
+  #editorBtn:hover{background:rgba(255,255,255,.25);}
 
-  /* ── WRAP ── */
-  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+  .wrap{max-width:860px; margin:0 auto; padding:32px 20px 60px;}
 
-  /* ── TELA DE IDENTIFICAÇÃO ── */
-  #tela-id { padding-top: 8px; }
-  .id-card {
-    background: #fff; border-radius: 14px; padding: 40px 36px;
-    max-width: 480px; margin: 36px auto 0; box-shadow: 0 4px 24px rgba(0,158,227,.10);
-    border: 1.5px solid #E0E7EF; text-align: center;
+  .card{
+    background:#fff; border-radius:14px;
+    box-shadow:0 4px 24px rgba(0,158,227,.10);
+    padding:36px 32px;
   }
-  .id-card .logo { font-size: 2.6rem; margin-bottom: 4px; }
-  .id-card h2 { color: #009ee3; font-size: 1.25rem; margin-bottom: 6px; }
-  .id-card p  { color: #6B7280; font-size: .9rem; margin-bottom: 24px; }
-  .id-card input {
-    width: 100%; padding: 12px 14px; border: 1.5px solid #E0E7EF;
-    border-radius: 8px; font-size: 1rem; margin-bottom: 14px;
-    transition: border .2s;
-  }
-  .id-card input:focus { outline: none; border-color: #009ee3; }
-  .btn-primary {
-    width: 100%; padding: 13px; background: #009ee3; color: #fff;
-    border: none; border-radius: 8px; font-size: 1rem; font-weight: 600;
-    cursor: pointer; transition: background .2s;
-  }
-  .btn-primary:hover { background: #007BB5; }
-  .erro-id { color: #F23D4F; font-size: .85rem; margin-top: 6px; display: none; }
-  .btn-home { display: inline-block; margin-top: 22px; padding: 12px 30px; border-radius: 10px; border: 2px solid #009ee3; color: #007BB5; background: #fff; font-weight: 700; font-size: .9rem; text-decoration: none; transition: background .18s; }
-  .btn-home:hover { background: #E8F7FD; }
 
-  /* ── QUIZ ── */
-  #tela-quiz { display: none; max-width: 780px; margin: 0 auto; padding: 28px 16px 60px; }
-  .progresso-wrap { margin: 0 0 24px; }
-  .progresso-label { display: flex; justify-content: space-between; font-size: .82rem; color: #6B7280; margin-bottom: 6px; }
-  .progresso-barra { background: #E0E7EF; border-radius: 99px; height: 8px; }
-  .progresso-fill  { background: #009ee3; height: 8px; border-radius: 99px; transition: width .4s; }
+  #screenId .card{max-width:480px; margin:40px auto 0;}
+  #screenId h2{font-size:22px; margin-bottom:6px;}
+  #screenId p{color:var(--text2); font-size:14px; margin-bottom:24px;}
+  .field{margin-bottom:18px;}
+  .field label{display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:var(--text);}
+  .field input{
+    width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:10px;
+    font-family:'Inter',sans-serif; font-size:14px; background:#F9FBFC;
+  }
+  .field input:focus{outline:none; border-color:var(--blue); background:#fff;}
 
-  .card-pergunta {
-    background: #fff; border-radius: 14px; padding: 28px 28px 22px;
-    box-shadow: 0 2px 12px rgba(0,0,0,.08); margin-bottom: 20px;
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    background:var(--blue); color:#fff; border:none; padding:13px 26px;
+    border-radius:10px; font-family:'Inter',sans-serif; font-size:15px; font-weight:700;
+    cursor:pointer; width:100%; transition:background .15s;
   }
-  .num-pergunta { font-size: .78rem; font-weight: 700; color: #009ee3; letter-spacing: .06em; margin-bottom: 10px; }
-  .texto-pergunta { font-size: 1.05rem; color: #1A1A2E; line-height: 1.55; margin-bottom: 22px; }
-  .opcoes { display: flex; flex-direction: column; gap: 10px; }
-  .opcao {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 13px 16px; border: 1.8px solid #E0E7EF;
-    border-radius: 10px; cursor: pointer; transition: all .18s;
-    font-size: .97rem; color: #1A1A2E;
+  .btn:hover{background:var(--blue-dark);}
+  .btn:disabled{background:#B9C4CC; cursor:not-allowed;}
+  .btn-outline{
+    background:#fff; color:var(--blue); border:1.5px solid var(--blue);
   }
-  .opcao:hover:not(.desabilitada) { border-color: #009ee3; background: #F0F9FF; }
-  .opcao.selecionada { border-color: #009ee3; background: #E8F7FD; }
-  .opcao.selecionada .letra-opcao { background: #009ee3; color: #fff; }
-  .opcao.desabilitada { pointer-events: none; opacity: .75; }
-  .letra-opcao {
-    min-width: 26px; height: 26px; border-radius: 50%;
-    background: #E0E7EF; display: flex; align-items: center;
-    justify-content: center; font-weight: 700; font-size: .8rem; color: #6B7280;
-    flex-shrink: 0;
-  }
-  .opcao.correta   .letra-opcao { background: #00A650; color: #fff; }
-  .opcao.incorreta .letra-opcao { background: #F23D4F; color: #fff; }
+  .btn-outline:hover{background:var(--blue-light);}
 
-  .feedback-box {
-    margin-top: 16px; padding: 14px 16px; border-radius: 10px;
-    font-size: .91rem; line-height: 1.5; display: none;
+  #screenQuiz{display:none;}
+  .progress-bar{
+    height:8px; background:var(--border); border-radius:6px; overflow:hidden; margin-bottom:22px;
   }
-  .feedback-box.ok  { background: #E6F7EF; border-left: 4px solid #00A650; color: #065F46; }
-  .feedback-box.err { background: #FDEEF0; border-left: 4px solid #F23D4F; color: #9B1C1C; }
+  .progress-fill{height:100%; background:var(--blue); border-radius:6px; transition:width .3s;}
+  .q-meta{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .q-meta span{font-size:13px; font-weight:600; color:var(--text2);}
+  .q-title{font-size:18px; font-weight:700; margin-bottom:22px; line-height:1.4;}
 
-  .btn-nav {
-    padding: 11px 28px; border: none; border-radius: 8px;
-    font-size: .97rem; font-weight: 600; cursor: pointer; transition: background .2s;
+  .option{
+    background:#F5F5F5; border:1.5px solid transparent; border-radius:12px;
+    padding:14px 16px; margin-bottom:12px; cursor:pointer;
+    font-size:14.5px; font-weight:500; transition:.15s;
+    display:flex; align-items:center; gap:12px;
   }
-  .btn-nav.proximo { background: #009ee3; color: #fff; }
-  .btn-nav.proximo:hover { background: #007BB5; }
-  .nav-row { display: flex; justify-content: flex-end; margin-top: 18px; }
+  .option:hover{background:#EFEFEF;}
+  .option.selected{background:var(--blue-light); border-color:var(--blue); font-weight:600;}
+  .option .dot{
+    width:18px; height:18px; border-radius:50%; border:2px solid #C7CDD3; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .option.selected .dot{border-color:var(--blue); background:var(--blue);}
+  .option.selected .dot::after{content:''; width:8px; height:8px; border-radius:50%; background:#fff;}
 
-  /* ── RESULTADO ── */
-  #tela-resultado { display: none; max-width: 680px; margin: 0 auto; padding: 40px 16px 80px; text-align: center; }
-  .resultado-card {
-    background: #fff; border-radius: 16px; padding: 40px 32px;
-    box-shadow: 0 4px 24px rgba(0,0,0,.1);
-  }
-  .nota-circulo {
-    width: 120px; height: 120px; border-radius: 50%;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    margin: 0 auto 20px; border: 6px solid;
-  }
-  .nota-circulo .nota-num { font-size: 2.4rem; font-weight: 800; }
-  .nota-circulo .nota-label { font-size: .72rem; font-weight: 600; letter-spacing: .04em; }
-  .nivel-badge {
-    display: inline-block; padding: 6px 20px; border-radius: 99px;
-    font-size: .92rem; font-weight: 700; margin-bottom: 18px;
-  }
-  .resultado-card h2 { font-size: 1.5rem; color: #1A1A2E; margin-bottom: 8px; }
-  .resultado-card p  { color: #6B7280; margin-bottom: 24px; }
-  .stats-row { display: flex; justify-content: center; gap: 32px; margin: 20px 0 28px; }
-  .stat { text-align: center; }
-  .stat .num { font-size: 1.8rem; font-weight: 800; color: #009ee3; }
-  .stat .txt { font-size: .78rem; color: #6B7280; }
-  .btn-reiniciar {
-    padding: 13px 36px; background: #009ee3; color: #fff;
-    border: none; border-radius: 8px; font-size: 1rem;
-    font-weight: 600; cursor: pointer;
-  }
-  .btn-reiniciar:hover { background: #007BB5; }
-  .enviando { color: #009ee3; font-size: .85rem; margin-top: 12px; }
+  .quiz-actions{display:flex; justify-content:flex-end; margin-top:28px;}
+  .quiz-actions .btn{width:auto; padding:13px 30px;}
 
-  /* ── EDITOR ── */
-  #modal-editor {
-    display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55);
-    z-index: 1000; align-items: center; justify-content: center;
+  #screenResult{display:none;}
+  #screenResult .card{text-align:center;}
+  .score-badge{
+    width:120px; height:120px; border-radius:50%; margin:0 auto 20px;
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    font-weight:800;
   }
-  #modal-editor.aberto { display: flex; }
-  .editor-box {
-    background: #fff; border-radius: 14px; padding: 32px 28px;
-    width: 100%; max-width: 560px; max-height: 88vh; overflow-y: auto;
+  .score-badge .num{font-size:34px; line-height:1;}
+  .score-badge .den{font-size:13px; opacity:.8;}
+  .result-label{
+    display:inline-block; padding:8px 18px; border-radius:20px; font-weight:700; font-size:14px;
+    margin-bottom:22px;
   }
-  .editor-box h3 { color: #009ee3; margin-bottom: 20px; }
-  .editor-box label { font-size: .82rem; font-weight: 600; color: #6B7280; display: block; margin-bottom: 4px; }
-  .editor-box input, .editor-box textarea {
-    width: 100%; padding: 9px 12px; border: 1.5px solid #E0E7EF;
-    border-radius: 8px; font-size: .92rem; margin-bottom: 12px; font-family: inherit;
+  .stats{display:flex; justify-content:center; gap:28px; margin:22px 0 30px; flex-wrap:wrap;}
+  .stat{text-align:center;}
+  .stat .n{font-size:24px; font-weight:800;}
+  .stat .l{font-size:12px; color:var(--text2); font-weight:600; text-transform:uppercase; letter-spacing:.03em;}
+  #screenResult .btn{max-width:280px; margin:0 auto;}
+
+  .editable{outline:1px dashed var(--blue); outline-offset:2px; border-radius:4px; cursor:text;}
+  #editorBar{
+    display:none; background:var(--yellow-bg); border:1px solid var(--yellow);
+    color:#7A5200; padding:10px 16px; border-radius:10px; font-size:13px; font-weight:600;
+    margin-bottom:18px; text-align:center;
   }
-  .editor-box textarea { min-height: 72px; resize: vertical; }
-  .editor-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
-  .editor-btns button {
-    padding: 9px 18px; border: none; border-radius: 7px;
-    font-size: .88rem; font-weight: 600; cursor: pointer;
+  #editorBar .btn-export{
+    background:#fff; color:#7A5200; border:1.5px solid var(--yellow);
+    padding:6px 14px; border-radius:8px; font-family:'Inter',sans-serif; font-size:12px;
+    font-weight:700; cursor:pointer; margin-left:10px;
   }
-  .btn-salvar   { background: #009ee3; color: #fff; }
-  .btn-cancelar { background: #eee; color: #444; }
-  .btn-exportar { background: #00A650; color: #fff; }
-  .pin-wrap { margin-bottom: 18px; }
-  .pin-wrap input { max-width: 160px; }
+  .correct-toggle{
+    margin-left:auto; background:#fff; border:1.5px solid var(--border); border-radius:8px;
+    padding:5px 12px; font-size:12px; font-weight:700; color:var(--text2); cursor:pointer;
+    white-space:nowrap; font-family:'Inter',sans-serif; flex-shrink:0;
+  }
+  .option.is-correct{ border-color:var(--green); background:var(--green-bg); }
+  .option.is-correct .correct-toggle{ background:var(--green); color:#fff; border-color:var(--green); }
+  #exportModal{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200;
+    align-items:center; justify-content:center; padding:20px;
+  }
+  #exportModal .modal-box{
+    background:#fff; border-radius:14px; padding:24px; max-width:700px; width:100%;
+    max-height:80vh; overflow:auto;
+  }
+  #exportText{
+    width:100%; height:320px; font-family:monospace; font-size:12px; padding:10px;
+    border:1px solid var(--border); border-radius:8px; resize:vertical;
+  }
 </style>
 </head>
 <body>
 
-<!-- ══════════ CABEÇALHO FIXO ══════════ -->
-<div class="hdr">
-  <div class="hdr-left">
-    <div class="hdr-logo">💰</div>
-    <div>
-      <h1>Pagos OFF — HSP</h1>
-      <p>Mercado Pago · FOS LATAM</p>
+<header>
+  <div class="header-left">
+    <div class="logo-circle">🧾</div>
+    <div class="header-titles">
+      <h1>Avaliação - Pagamentos OFF Boleto/PEC</h1>
+      <p>MLB · FOS MP Operações</p>
     </div>
   </div>
-  <button class="btn-editor" onclick="abrirPinModal()">⚙️ Modo Editor</button>
-</div>
+  <button id="editorBtn">⚙️ Modo Editor</button>
+</header>
 
-<div class="wrap">
-
-<!-- ══════════ TELA DE IDENTIFICAÇÃO ══════════ -->
-<div id="tela-id">
-  <div class="id-card">
-    <div class="logo">🏦</div>
-    <h2>Mercado Pago · FOS LATAM</h2>
-    <p>Avaliação: <strong>Pagos OFF — HSP</strong></p>
-    <input type="text"  id="inp-nome"  placeholder="Tu nombre completo" autocomplete="off">
-    <input type="email" id="inp-email" placeholder="Tu e-mail corporativo" autocomplete="off">
-    <button class="btn-primary" onclick="iniciarQuiz()">Comenzar evaluación</button>
-    <p class="erro-id" id="erro-id">Por favor, completa nombre y e-mail.</p>
-  </div>
-</div>
-
-<!-- ══════════ QUIZ ══════════ -->
-<div id="tela-quiz">
-  <div class="progresso-wrap">
-    <div class="progresso-label">
-      <span id="prog-txt">Pregunta 1 de 15</span>
-      <span id="prog-pct">0%</span>
+<div id="screenId" class="wrap">
+  <div class="card">
+    <h2>Antes de começar</h2>
+    <p>Preencha seus dados para iniciarmos a avaliação.</p>
+    <div class="field">
+      <label for="inpNome">Nome completo</label>
+      <input type="text" id="inpNome" placeholder="Digite seu nome">
     </div>
-    <div class="progresso-barra"><div class="progresso-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="field">
+      <label for="inpEmail">E-mail</label>
+      <input type="email" id="inpEmail" placeholder="seuemail@empresa.com">
+    </div>
+    <button class="btn" id="btnStart">Iniciar Avaliação →</button>
   </div>
+</div>
 
-  <div class="card-pergunta">
-    <div class="num-pergunta" id="num-pergunta"></div>
-    <div class="texto-pergunta" id="texto-pergunta"></div>
-    <div class="opcoes" id="opcoes"></div>
-    <div class="nav-row">
-      <button class="btn-nav proximo" id="btn-proximo" onclick="proximaPergunta()" style="display:none">
-        Siguiente →
-      </button>
+<div id="screenQuiz" class="wrap">
+  <div id="editorBar">Modo Editor ativo — edite o texto, marque a resposta correta e use ← Anterior / Próximo → para navegar entre as perguntas.<button type="button" id="btnExport" class="btn-export">📤 Exportar alterações</button></div>
+  <div class="card">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="q-meta">
+      <span id="qCounter">Pergunta 1 de 15</span>
+    </div>
+    <div class="q-title" id="qTitle"></div>
+    <div id="qOptions"></div>
+    <div class="quiz-actions" style="justify-content:space-between;">
+      <button class="btn btn-outline" id="btnPrev" style="width:auto; display:none;">← Anterior</button>
+      <button class="btn" id="btnNext" disabled style="width:auto;">Próximo →</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════ RESULTADO ══════════ -->
-<div id="tela-resultado">
-  <div class="resultado-card">
-    <div class="nota-circulo" id="nota-circulo">
-      <span class="nota-num" id="nota-num"></span>
-      <span class="nota-label">NOTA</span>
+<div id="screenResult" class="wrap">
+  <div class="card">
+    <div class="score-badge" id="scoreBadge">
+      <div class="num" id="scoreNum">0.0</div>
+      <div class="den">/ 10</div>
     </div>
-    <span class="nivel-badge" id="nivel-badge"></span>
-    <h2 id="res-nome"></h2>
-    <p id="res-msg"></p>
-    <div class="stats-row">
-      <div class="stat"><div class="num" id="stat-corretas"></div><div class="txt">Correctas</div></div>
-      <div class="stat"><div class="num" id="stat-incorretas"></div><div class="txt">Incorrectas</div></div>
-      <div class="stat"><div class="num" id="stat-total">15</div><div class="txt">Total</div></div>
+    <div class="result-label" id="resultLabel">—</div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="statCorrect" style="color:var(--green)">0</div><div class="l">Corretas</div></div>
+      <div class="stat"><div class="n" id="statIncorrect" style="color:var(--red)">0</div><div class="l">Incorretas</div></div>
+      <div class="stat"><div class="n" id="statTotal">0</div><div class="l">Total</div></div>
     </div>
-    <p class="enviando" id="msg-enviando"></p>
-    <a class="btn-home" href="index.html">🏠 Volver al inicio</a>
-  </div>
-</div>
-
-</div><!-- /.wrap -->
-
-<!-- Modal editor -->
-<div id="modal-editor">
-  <div class="editor-box">
-    <h3>✏️ Modo Editor</h3>
-
-    <div class="pin-wrap" id="pin-wrap">
-      <label>PIN de acceso</label>
-      <input type="password" id="inp-pin" placeholder="••••">
-      <div style="margin-top:8px;display:flex;gap:10px;">
-        <button class="btn-salvar" onclick="verificarPin()">Entrar</button>
-        <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
-      </div>
-      <p class="erro-id" id="erro-pin" style="display:none;margin-top:6px;">PIN incorrecto.</p>
-    </div>
-
-    <div id="editor-conteudo" style="display:none">
-      <p style="font-size:.82rem;color:#6B7280;margin-bottom:16px;">
-        Selecciona una pregunta para editar:
-      </p>
-      <select id="sel-pergunta" onchange="carregarEdicao()"
-        style="width:100%;padding:9px;border:1.5px solid #E0E7EF;border-radius:8px;margin-bottom:16px;font-size:.92rem;">
-      </select>
-
-      <label>Enunciado</label>
-      <textarea id="ed-enunciado"></textarea>
-
-      <label>Opción A</label><input type="text" id="ed-a">
-      <label>Opción B</label><input type="text" id="ed-b">
-      <label>Opción C</label><input type="text" id="ed-c">
-      <label>Opción D</label><input type="text" id="ed-d">
-
-      <label>Correcta (a / b / c / d)</label>
-      <input type="text" id="ed-correta" maxlength="1" style="max-width:80px;">
-
-      <label>Feedback (explicación)</label>
-      <textarea id="ed-feedback"></textarea>
-
-      <div class="editor-btns">
-        <button class="btn-salvar"   onclick="salvarEdicao()">💾 Guardar</button>
-        <button class="btn-exportar" onclick="exportarJSON()">📥 Exportar JSON</button>
-        <button class="btn-cancelar" onclick="fecharModal()">Cerrar</button>
-      </div>
-    </div>
+    <a href="index.html" class="btn btn-outline" style="text-decoration:none; display:inline-flex;">🏠 Voltar ao início</a>
   </div>
 </div>
 
 <script>
-/* ══════════ CONFIG ══════════ */
 const CONFIG = {
-  avaliacaoNome : "Pagos OFF HSP",
-  sheetsURL     : "https://docs.google.com/forms/d/e/1FAIpQLSfbvjEJ8GnFniMLSX7NQKQcX2mly06rtnC0xoZdBL0Pixt8Ng/formResponse",
-  pinEditor     : "1234"
+  avaliacaoNome: "Pagamentos OFF Boleto/PEC - MLB",
+
+  formActionUrl: "https://docs.google.com/forms/u/0/d/e/1FAIpQLSfPhCyKWzRRf1PxE-MO6qxmv436UxZfBAmVe7WY0tmY0_YCGg/formResponse",
+
+  formEntries: {
+    dataHora:            "entry.2017782703",
+    avaliacao:           "entry.78177913",
+    nome:                "entry.1818530692",
+    email:               "entry.1056222960",
+    nota:                "entry.48293095",
+    resultado:           "entry.381965002",
+    corretas:            "entry.144582871",
+    incorretas:          "entry.1335730000",
+    total:               "entry.891321817",
+    respostasDetalhadas: "entry.407031098"
+  },
+
+  editorPin: "1234",
+
+  questions: [
+    {
+      q: "Qual é a principal diferença entre pagamento com cartão de crédito e pagamento Off?",
+      options: [
+        "No pagamento Off, o usuário paga com cartão de crédito diretamente pela plataforma",
+        "No pagamento com cartão, o usuário realiza a compra pela plataforma do Mercado Pago (fluxo adquirência); no pagamento Off, ele faz transferência bancária ou paga em dinheiro por meio de uma entidade extra-bancária",
+        "Pagamento Off só existe para compras internacionais",
+        "Não há diferença, ambos usam o mesmo fluxo de liquidação"
+      ],
+      correct: 1
+    },
+    {
+      q: "Qual é o prazo de liquidação dos boletos de pagamento do Mercado Livre e dos boletos PEC-Caixa?",
+      options: [
+        "Imediato",
+        "2 horas ou até o fim do dia",
+        "5 dias úteis",
+        "30 dias"
+      ],
+      correct: 1
+    },
+    {
+      q: "O que é um Fondeo?",
+      options: [
+        "A criação de um pagamento novo, digitando manualmente todos os dados",
+        "O cancelamento definitivo de uma transação",
+        "Acreditar de forma imediata um valor que já está dentro dos sistemas do Mercado Pago, mas não está atrelado a nenhum usuário",
+        "Um tipo de boleto exclusivo para pessoa jurídica"
+      ],
+      correct: 2
+    },
+    {
+      q: "Por que a ação de Pagamento Manual não pode mais ser executada, salvo exceções aprovadas pela Vertical de Conciliação?",
+      options: [
+        "Porque é mais lenta que o Fondeo",
+        "Porque sempre gera uma diferença no contábil",
+        "Porque só funciona para boletos Caixa",
+        "Porque exige aprovação do usuário"
+      ],
+      correct: 1
+    },
+    {
+      q: "Em um boleto cuja linha digitável começa com o nº do banco 341, qual é o código de identificação utilizado?",
+      options: [
+        "Reference ID",
+        "NSU",
+        "Linha digitável completa",
+        "CPF do pagador"
+      ],
+      correct: 1
+    },
+    {
+      q: "Pelo One Source, quais são as 3 formas de identificar uma transação de boleto/PEC?",
+      options: [
+        "Apenas pelo CPF do usuário",
+        "Reference Id, Referência NSU e Referência Pago Off",
+        "Apenas pelo valor da transação",
+        "Somente pelo nome do beneficiário"
+      ],
+      correct: 1
+    },
+    {
+      q: "No Admin Offline Payments, após localizar o pagamento, quais passos devem ser seguidos para aplicar o fondeo?",
+      options: [
+        "Clicar no ícone chave, inserir o Cust Id que deve receber o fondeo, clicar em FONDEAR e depois confirmar",
+        "Apenas clicar em Cancelar",
+        "Enviar um e-mail para o usuário sem nenhuma ação no sistema",
+        "Criar um novo pagamento manual"
+      ],
+      correct: 0
+    },
+    {
+      q: "Quando o status é 'potencial_fondeo' mas não aparece a chave de fondeo, o que deve ser feito?",
+      options: [
+        "Ignorar o caso e devolver para a cola de origem",
+        "Aplicar um Pagamento Manual",
+        "Selecionar o pagamento, clicar em ÂNCORA e aguardar aprovação do supervisor",
+        "Cancelar a transação imediatamente"
+      ],
+      correct: 2
+    },
+    {
+      q: "Quando é necessário fazer a 'Subida de Arquivo Default'?",
+      options: [
+        "Sempre que o usuário solicitar reembolso",
+        "Quando há conciliação do pagamento, mas a transação não é encontrada no Admin",
+        "Quando o pagamento está duplicado",
+        "Sempre antes de aplicar qualquer fondeo"
+      ],
+      correct: 1
+    },
+    {
+      q: "No resultado de uma consulta de conciliação, o que significa o status 'NOT RECONCILED'?",
+      options: [
+        "A liquidação foi efetuada normalmente",
+        "Não existe nenhuma informação sobre o pagamento",
+        "O valor não entrou no MP e o usuário deve verificar com a entidade pagadora",
+        "O pagamento foi cancelado pelo usuário"
+      ],
+      correct: 2
+    },
+    {
+      q: "No caso de Pagamento Cruzado, antes de tomar qualquer ação, o que deve ser feito?",
+      options: [
+        "Aplicar o fondeo imediatamente",
+        "Consultar a Vertical antes de qualquer ação",
+        "Cancelar a conta do usuário que recebeu o valor",
+        "Aplicar um Pagamento Manual para corrigir"
+      ],
+      correct: 1
+    },
+    {
+      q: "Qual é a diferença principal entre Retenção via Transfer V2 e Retenção via Motor de Deuda?",
+      options: [
+        "Não há diferença, são exatamente o mesmo processo",
+        "O Transfer V2 usa 'Crear Processo' com Tipo de Processo Retenção; o Motor de Deuda tem sua própria tela de Processo com Monto de retenção",
+        "O Motor de Deuda só serve para transferências entre contas de mesma titularidade",
+        "O Transfer V2 nunca precisa de aprovação"
+      ],
+      correct: 1
+    },
+    {
+      q: "A Transferência via Transfer V2 só é permitida entre quais contas?",
+      options: [
+        "Contas de qualquer titularidade, sem restrição",
+        "Apenas contas verificadas pelo time de Payers",
+        "Contas de mesma titularidade (mesmo documento CPF/CNPJ)",
+        "Somente contas internas Anonymous"
+      ],
+      correct: 2
+    },
+    {
+      q: "Quais informações o comprovante de pagamento deve conter para a Validação Pré-Fondeo?",
+      options: [
+        "Apenas o valor da transação",
+        "Somente o CPF do usuário",
+        "Apenas a linha digitável",
+        "Data da transação, valor, linha digitável, nome do beneficiário, nome do pagador e instituição emissora"
+      ],
+      correct: 3
+    },
+    {
+      q: "Sobre a devolução (Refund) de boleto, qual regra é válida apenas para boletos Marketplace (não vale para boletos de adição de dinheiro)?",
+      options: [
+        "O usuário pode escolher receber o estorno na conta MP ou em uma conta externa",
+        "O estorno sempre vai para uma conta Anonymous",
+        "O estorno é sempre feito via Pagamento Manual",
+        "O prazo de devolução é sempre de 90 dias"
+      ],
+      correct: 0
+    }
+  ]
 };
 
-/* ══════════ PERGUNTAS ══════════ */
-let perguntas = [
-  {
-    enunciado: "¿Qué acción se debe tomar cuando el cliente NO envía el comprobante de pago en casos de Pagos OFF fuera de plazo?",
-    opcoes: [
-      { letra:"a", texto:"Cerrar el caso automáticamente sin responder." },
-      { letra:"b", texto:'Responder con txtblaze "COMPHSP" indicando que nos adjunten el comprobante de pago.' },
-      { letra:"c", texto:"Derivar a terceros sin solicitar comprobante." },
-      { letra:"d", texto:"Aplicar fondeo directamente sin comprobante." }
-    ],
-    correta: "b",
-    feedback: 'Cuando el cliente NO envía comprobante, se responde con txtblaze "COMPHSP" y se indica en el desplegable que nos adjunten el comprobante de pago.'
-  },
-  {
-    enunciado: "¿Qué herramienta se debe usar para buscar la liquidación cuando el usuario que se contacta NO coincide con el del caso en Pagos OFF (MLA)?",
-    opcoes: [
-      { letra:"a", texto:"OneTool directamente." },
-      { letra:"b", texto:"Tablero Búsqueda FOS." },
-      { letra:"c", texto:"Simetrik, para buscar la liquidación." },
-      { letra:"d", texto:"Appsheet." }
-    ],
-    correta: "c",
-    feedback: "Cuando el usuario que contacta NO coincide con el del caso, se va a Simetrik a buscar la liquidación. Si se encuentra, se consulta a TMO; si no, se consulta a la entidad."
-  },
-  {
-    enunciado: "En el Admin de Pagos OFF, si el pago aparece con estado 'APROBADO o PROCESADO', ¿cuál es la acción correcta?",
-    opcoes: [
-      { letra:"a", texto:'Fondear desde el botón del admin.' },
-      { letra:"b", texto:'Responder con txtblaze "PACRE" y derivar a la última cola.' },
-      { letra:"c", texto:"Descartar el pago inmediatamente." },
-      { letra:"d", texto:"Consultar a IT por Slack." }
-    ],
-    correta: "b",
-    feedback: 'Cuando el estado en el Admin es APROBADO o PROCESADO, respondemos con txtblaze "PACRE" y derivamos a la última cola.'
-  },
-  {
-    enunciado: "¿En qué situación se puede fondear desde el botón de la captura en el Admin de OFF?",
-    opcoes: [
-      { letra:"a", texto:"Siempre que el pago esté aprobado." },
-      { letra:"b", texto:'Cuando no figure en "Acciones" la llave 🔧, o cuando el usuario que contacta sea el mismo que figura en el admin.' },
-      { letra:"c", texto:"Cuando el comprobante es inválido." },
-      { letra:"d", texto:"Siempre que el monto sea mayor a $1000." }
-    ],
-    correta: "b",
-    feedback: 'Solo fondeamos desde el botón de la captura cuando no figure en "Acciones" la llave 🔧, o cuando el usuario que se contacta sea el mismo que figura en el admin.'
-  },
-  {
-    enunciado: "Para Pagos OFF fuera de plazo en MLC (Chile), si el pago tiene referencia en OS, ¿cuál es el siguiente paso?",
-    opcoes: [
-      { letra:"a", texto:"Buscar por monto y payment en el Tablero." },
-      { letra:"b", texto:"Consultar directamente a la entidad." },
-      { letra:"c", texto:"Copiar la referencia e ir al ADMIN OFF para verificarla." },
-      { letra:"d", texto:'Responder con txtblaze "OFFPLAZO".' }
-    ],
-    correta: "c",
-    feedback: "Para MLC, si el pago tiene referencia en OS, se copia y se va al ADMIN OFF para verificarla."
-  },
-  {
-    enunciado: "¿Cuál es el txtblaze correcto para responder cuando el pago se encuentra EN PLAZO?",
-    opcoes: [
-      { letra:"a", texto:'"PACRE"' },
-      { letra:"b", texto:'"COMPHSP"' },
-      { letra:"c", texto:'"OFFPLAZO"' },
-      { letra:"d", texto:'"PMAN"' }
-    ],
-    correta: "c",
-    feedback: 'Cuando el payment se encuentra en plazo, se devuelve el caso respondiendo con txtblaze "OFFPLAZO".'
-  },
-  {
-    enunciado: "En SemiOnline MPE (Perú - PagoEfectivo), si encontramos el pago con status approved y payment_status cancelled, ¿qué se debe hacer?",
-    opcoes: [
-      { letra:"a", texto:"Acreditar inmediatamente desde Admin Pagos OFF." },
-      { letra:"b", texto:"Consultar al equipo de TMO a través del canal de Slack #desvio-fos-tmo." },
-      { letra:"c", texto:'Responder con txtblaze "PACRE".' },
-      { letra:"d", texto:"Descartar el pago." }
-    ],
-    correta: "b",
-    feedback: "Para MPE, si el pago tiene status approved y payment_status cancelled, se consulta al equipo de TMO por el canal de Slack #desvio-fos-tmo."
-  },
-  {
-    enunciado: "¿Qué medio de pago utiliza Colombia (MCO) para Pagos OFF?",
-    opcoes: [
-      { letra:"a", texto:"Abitab y Redpagos." },
-      { letra:"b", texto:"Banesco y Mercantil." },
-      { letra:"c", texto:"Efecty." },
-      { letra:"d", texto:"PayCash." }
-    ],
-    correta: "c",
-    feedback: "Colombia (MCO) utiliza Efecty como medio de pago OFF."
-  },
-  {
-    enunciado: "¿Cuándo se debe descartar un pago en el Admin de OFF?",
-    opcoes: [
-      { letra:"a", texto:"Siempre que el usuario solicite la devolución." },
-      { letra:"b", texto:'Cuando el pago está liquidado, el user coincide con quien contacta, o cuando el ADMIN está vacío (permite hacer el fondeo para el contacto del caso).' },
-      { letra:"c", texto:"Cuando no se encuentra el comprobante." },
-      { letra:"d", texto:"Cuando el pago tiene más de 30 días." }
-    ],
-    correta: "b",
-    feedback: "Solo se descarta un pago si está liquidado y el user coincide con quien contacta, o cuando no hay user en el ADMIN (se encuentra vacío). Caso contrario, se debe accionar a ACO y pedir un archivo DEFAULT."
-  },
-  {
-    enunciado: "En Cash In fuera de plazo (MLA), si el estado del pago es 'OBTENIDO, PENDIENTE o CANCELADO', ¿qué se hace si se encuentra liquidado en conciliación?",
-    opcoes: [
-      { letra:"a", texto:"Consultar a la entidad vía mail." },
-      { letra:"b", texto:"Aplicar fondeo." },
-      { letra:"c", texto:'Responder con txtblaze "PACRE".' },
-      { letra:"d", texto:"Derivar a terceros." }
-    ],
-    correta: "b",
-    feedback: "Para Cash In con estados OBTENIDO, PENDIENTE o CANCELADO: si se encuentra liquidado en conciliación, se aplica fondeo."
-  },
-  {
-    enunciado: "¿Qué es un 'Potencial Account Fondeo' (PAF) en el contexto de Pagos OFF?",
-    opcoes: [
-      { letra:"a", texto:"Un pago ya acreditado correctamente." },
-      { letra:"b", texto:"Un pago aprobado o procesado en el admin." },
-      { letra:"c", texto:"Un estado del admin que indica que se debe fondear cuando el usuario que contacta es el mismo del caso." },
-      { letra:"d", texto:"Un pago rechazado por la entidad." }
-    ],
-    correta: "c",
-    feedback: "POTENCIAL FONDEO DE CUENTA (PAF) es el estado que indica que se debe fondear desde el admin cuando el usuario que se contacta es el MISMO que el del caso (previa validación de Conci)."
-  },
-  {
-    enunciado: "Para Pagos OFF en MLM (México), ¿qué se debe hacer si NO se encuentra la liquidación en Simetrik/Tablero y el pago es de OXXO?",
-    opcoes: [
-      { letra:"a", texto:'Aplicar Pago Manual (PM) directamente.' },
-      { letra:"b", texto:"Crear un ticket para OXXO y derivar a Terceros." },
-      { letra:"c", texto:'Responder con txtblaze "PACRE".' },
-      { letra:"d", texto:"Consultar a TMO por Slack." }
-    ],
-    correta: "b",
-    feedback: "Para MLM, cuando el usuario no coincide con el del caso y NO se encuentra la liquidación, se crea un ticket para OXXO y se deriva a Terceros."
-  },
-  {
-    enunciado: "En la Subida de Archivo Default, ¿cuáles son los tres campos que se deben completar en el archivo CSV?",
-    opcoes: [
-      { letra:"a", texto:"Payment ID, Payer ID, Monto." },
-      { letra:"b", texto:"Fecha de Pago, Referencia, Total Amount." },
-      { letra:"c", texto:"Site, Medio de Pago, Referencia." },
-      { letra:"d", texto:"Nombre de archivo, Layout, Fecha." }
-    ],
-    correta: "b",
-    feedback: "El archivo CSV default debe contener: Fecha de Pago, Referencia y Total Amount."
-  },
-  {
-    enunciado: "En Pagos Cruzados (MCO), si el payer y el collector NO coinciden, ¿cuál es la acción correcta?",
-    opcoes: [
-      { letra:"a", texto:"Aplicar retención al payer." },
-      { letra:"b", texto:'Devolver el caso con txtblaze "PCNOC".' },
-      { letra:"c", texto:"Fondear directamente al usuario correcto." },
-      { letra:"d", texto:"Consultar a IT." }
-    ],
-    correta: "b",
-    feedback: 'En Pagos Cruzados: si el payer y el collector NO coinciden, se devuelve el caso con txtblaze "PCNOC".'
-  },
-  {
-    enunciado: "¿Cuál es el estado en Simetrik V2 (Big Query) que indica que se DEBE APLICAR fondeo en casos PAF?",
-    opcoes: [
-      { letra:"a", texto:"RECONCILIED (Conciliado)." },
-      { letra:"b", texto:"ADJUSTED (Ajustado)." },
-      { letra:"c", texto:"PENDIENTE." },
-      { letra:"d", texto:"NO HAY DATOS PARA MOSTRAR." }
-    ],
-    correta: "c",
-    feedback: "En la validación de PAF en Simetrik: PENDIENTE = Notificar Conci > APLICA fondeo. RECONCILIED = ya acreditado > NO APLICA fondeo. ADJUSTED = Validar con Conci > NO APLICA fondeo."
-  }
-];
+let currentQ = 0;
+let selectedOption = null;
+const answers = new Array(CONFIG.questions.length).fill(null);
+let editorMode = false;
 
-/* ══════════ ESTADO ══════════ */
-let indice       = 0;
-let corretas     = 0;
-let respostaSelecionada = null;
-let respostasLog = [];
-let nomeUser     = "";
-let emailUser    = "";
-
-/* ══════════ FUNÇÕES ══════════ */
-function iniciarQuiz() {
-  nomeUser  = document.getElementById("inp-nome").value.trim();
-  emailUser = document.getElementById("inp-email").value.trim();
-  if (!nomeUser || !emailUser) {
-    document.getElementById("erro-id").style.display = "block";
+document.getElementById('btnStart').addEventListener('click', () => {
+  const nome = document.getElementById('inpNome').value.trim();
+  const email = document.getElementById('inpEmail').value.trim();
+  if(!nome || !email){
+    alert('Por favor, preencha nome e e-mail para continuar.');
     return;
   }
-  document.getElementById("tela-id").style.display   = "none";
-  document.getElementById("tela-quiz").style.display = "block";
-  indice = 0; corretas = 0; respostasLog = [];
-  renderPergunta();
-}
+  document.getElementById('screenId').style.display = 'none';
+  document.getElementById('screenQuiz').style.display = 'block';
+  renderQuestion();
+});
 
-function renderPergunta() {
-  const p = perguntas[indice];
-  document.getElementById("num-pergunta").textContent =
-    `PREGUNTA ${indice + 1} DE ${perguntas.length}`;
-  document.getElementById("texto-pergunta").textContent = p.enunciado;
+function renderQuestion(){
+  const total = CONFIG.questions.length;
+  const q = CONFIG.questions[currentQ];
 
-  const oDiv = document.getElementById("opcoes");
-  oDiv.innerHTML = "";
-  p.opcoes.forEach(op => {
-    const div = document.createElement("div");
-    div.className = "opcao";
-    div.dataset.letra = op.letra;
-    div.innerHTML = `<span class="letra-opcao">${op.letra.toUpperCase()}</span>${op.texto}`;
-    div.addEventListener("click", () => selecionarOpcao(op.letra, div));
-    oDiv.appendChild(div);
+  document.getElementById('progressFill').style.width = ((currentQ)/total*100) + '%';
+  document.getElementById('qCounter').textContent = `Pergunta ${currentQ+1} de ${total}`;
+
+  const qTitleEl = document.getElementById('qTitle');
+  qTitleEl.textContent = q.q;
+  qTitleEl.classList.toggle('editable', editorMode);
+  qTitleEl.contentEditable = editorMode ? 'true' : 'false';
+
+  const optsDiv = document.getElementById('qOptions');
+  optsDiv.innerHTML = '';
+  selectedOption = null;
+
+  q.options.forEach((optText, idx) => {
+    const el = document.createElement('div');
+    el.className = 'option' + (editorMode && idx === q.correct ? ' is-correct' : '');
+
+    const dot = document.createElement('div');
+    dot.className = 'dot';
+    el.appendChild(dot);
+
+    const textEl = document.createElement('div');
+    textEl.className = 'opt-text' + (editorMode ? ' editable' : '');
+    textEl.textContent = optText;
+    if(editorMode){
+      textEl.contentEditable = 'true';
+      textEl.addEventListener('blur', saveEdits);
+    }
+    el.appendChild(textEl);
+
+    if(editorMode){
+      const toggleBtn = document.createElement('button');
+      toggleBtn.type = 'button';
+      toggleBtn.className = 'correct-toggle';
+      toggleBtn.textContent = idx === q.correct ? '✓ Correta' : 'Marcar correta';
+      toggleBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        saveEdits();
+        q.correct = idx;
+        renderQuestion();
+      });
+      el.appendChild(toggleBtn);
+    }
+
+    el.addEventListener('click', () => {
+      if(editorMode) return;
+      document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedOption = idx;
+      document.getElementById('btnNext').disabled = false;
+    });
+
+    optsDiv.appendChild(el);
   });
 
-  document.getElementById("btn-proximo").style.display  = "none";
-  respostaSelecionada = null;
+  document.getElementById('btnPrev').style.display = editorMode ? 'inline-flex' : 'none';
+  document.getElementById('btnPrev').disabled = currentQ === 0;
 
-  const pct = Math.round((indice / perguntas.length) * 100);
-  document.getElementById("prog-txt").textContent  = `Pregunta ${indice+1} de ${perguntas.length}`;
-  document.getElementById("prog-pct").textContent  = pct + "%";
-  document.getElementById("prog-fill").style.width = pct + "%";
-}
-
-function selecionarOpcao(letra, elClicado) {
-  respostaSelecionada = letra;
-  document.querySelectorAll(".opcao").forEach(el => el.classList.remove("selecionada"));
-  elClicado.classList.add("selecionada");
-  document.getElementById("btn-proximo").style.display = "inline-flex";
-}
-
-function proximaPergunta() {
-  if (respostaSelecionada === null) return;
-
-  const p  = perguntas[indice];
-  const ok = respostaSelecionada === p.correta;
-  if (ok) corretas++;
-
-  document.querySelectorAll(".opcao").forEach(el => el.classList.add("desabilitada"));
-
-  respostasLog.push({
-    pergunta: p.enunciado,
-    escolha : respostaSelecionada,
-    correta : p.correta,
-    acerto  : ok
-  });
-
-  indice++;
-  if (indice < perguntas.length) {
-    renderPergunta();
+  if(editorMode){
+    document.getElementById('btnNext').disabled = false;
+    document.getElementById('btnNext').textContent = (currentQ === total - 1) ? 'Última pergunta' : 'Próximo →';
   } else {
-    mostrarResultado();
+    document.getElementById('btnNext').disabled = true;
+    document.getElementById('btnNext').textContent = (currentQ === total - 1) ? 'Finalizar →' : 'Próximo →';
   }
 }
 
-function mostrarResultado() {
-  document.getElementById("tela-quiz").style.display      = "none";
-  document.getElementById("tela-resultado").style.display = "block";
-
-  const incorretas = perguntas.length - corretas;
-  const nota       = parseFloat(((corretas / perguntas.length) * 10).toFixed(1));
-
-  let nivel, corNivel, msg;
-  if (nota < 7.0) {
-    nivel = "Nivelamiento"; corNivel = "#F23D4F";
-    msg   = "Necesitas reforzar los contenidos. ¡Vuelve a estudiar el manual!";
-  } else if (nota === 7.0) {
-    nivel = "En Aprendizaje"; corNivel = "#B45309";
-    msg   = "¡Vas por buen camino! Sigue practicando para mejorar.";
-  } else {
-    nivel = "Aprendizaje Superado"; corNivel = "#00A650";
-    msg   = "¡Excelente desempeño! Dominas los conceptos de Pagos OFF HSP.";
+document.getElementById('btnNext').addEventListener('click', () => {
+  if(editorMode){
+    saveEdits();
+    if(currentQ < CONFIG.questions.length - 1){
+      currentQ++;
+      renderQuestion();
+    }
+    return;
   }
+  if(selectedOption === null) return;
+  answers[currentQ] = selectedOption;
 
-  const circ = document.getElementById("nota-circulo");
-  circ.style.borderColor = corNivel;
-  circ.style.color       = corNivel;
-  document.getElementById("nota-num").textContent = nota.toFixed(1);
-
-  const badge = document.getElementById("nivel-badge");
-  badge.textContent        = nivel;
-  badge.style.background   = corNivel + "22";
-  badge.style.color        = corNivel;
-  badge.style.border       = "1.5px solid " + corNivel;
-
-  document.getElementById("res-nome").textContent       = nomeUser;
-  document.getElementById("res-msg").textContent        = msg;
-  document.getElementById("stat-corretas").textContent  = corretas;
-  document.getElementById("stat-incorretas").textContent= incorretas;
-
-  enviarSheets(nota, nivel, corretas, incorretas);
-}
-
-function enviarSheets(nota, nivel, corretas, incorretas) {
-  document.getElementById("msg-enviando").textContent = "⏳ Enviando resultado...";
-  const detalhes = respostasLog.map((r,i) =>
-    `P${i+1}:${r.acerto?"✓":"✗"}(${r.escolha})`).join(" | ");
-  const agora = new Date().toLocaleString("es-AR");
-  const formData = new FormData();
-  formData.append("entry.2017782703", agora);
-  formData.append("entry.78177913",   CONFIG.avaliacaoNome);
-  formData.append("entry.1818530692", nomeUser);
-  formData.append("entry.1056222960", emailUser);
-  formData.append("entry.48293095",   nota);
-  formData.append("entry.381965002",  nivel);
-  formData.append("entry.144582871",  corretas);
-  formData.append("entry.1335730000", incorretas);
-  formData.append("entry.891321817",  perguntas.length);
-  formData.append("entry.407031098",  detalhes);
-  fetch(CONFIG.sheetsURL, { method:"POST", mode:"no-cors", body: formData })
-    .then(() => document.getElementById("msg-enviando").textContent = "✅ Resultado registrado correctamente.")
-    .catch(() => document.getElementById("msg-enviando").textContent = "⚠️ No se pudo registrar el resultado.");
-}
-
-function reiniciar() {
-  document.getElementById("tela-resultado").style.display = "none";
-  document.getElementById("tela-id").style.display        = "block";
-  document.getElementById("inp-nome").value  = "";
-  document.getElementById("inp-email").value = "";
-}
-
-/* ══════════ EDITOR ══════════ */
-function abrirPinModal() {
-  document.getElementById("modal-editor").classList.add("aberto");
-  document.getElementById("pin-wrap").style.display       = "block";
-  document.getElementById("editor-conteudo").style.display= "none";
-  document.getElementById("inp-pin").value = "";
-  document.getElementById("erro-pin").style.display = "none";
-}
-function fecharModal() {
-  document.getElementById("modal-editor").classList.remove("aberto");
-}
-function verificarPin() {
-  if (document.getElementById("inp-pin").value === CONFIG.pinEditor) {
-    document.getElementById("pin-wrap").style.display        = "none";
-    document.getElementById("editor-conteudo").style.display = "block";
-    popularSelectEditor();
+  if(currentQ < CONFIG.questions.length - 1){
+    currentQ++;
+    renderQuestion();
   } else {
-    document.getElementById("erro-pin").style.display = "block";
+    finishQuiz();
   }
-}
-function popularSelectEditor() {
-  const sel = document.getElementById("sel-pergunta");
-  sel.innerHTML = "";
-  perguntas.forEach((p,i) => {
-    const op = document.createElement("option");
-    op.value       = i;
-    op.textContent = `P${i+1}: ${p.enunciado.substring(0,55)}…`;
-    sel.appendChild(op);
+});
+
+document.getElementById('btnPrev').addEventListener('click', () => {
+  saveEdits();
+  if(currentQ > 0){
+    currentQ--;
+    renderQuestion();
+  }
+});
+
+function finishQuiz(){
+  const total = CONFIG.questions.length;
+  let corretas = 0;
+  const detalhes = [];
+
+  CONFIG.questions.forEach((q, i) => {
+    const acertou = answers[i] === q.correct;
+    if(acertou) corretas++;
+    detalhes.push(`P${i+1}: ${acertou ? 'Correta' : 'Incorreta'}`);
   });
-  carregarEdicao();
+
+  const incorretas = total - corretas;
+  const nota = (corretas / total * 10);
+  const notaFmt = nota.toFixed(1);
+
+  let resultado, color, bg;
+  if(nota < 7.0){ resultado = 'Reforço/Nivelamento'; color = 'var(--red)'; bg = 'var(--red-bg)'; }
+  else if(nota === 7.0){ resultado = 'Em Aprendizado'; color = 'var(--yellow)'; bg = 'var(--yellow-bg)'; }
+  else { resultado = 'Aprendizado Superado'; color = 'var(--green)'; bg = 'var(--green-bg)'; }
+
+  document.getElementById('screenQuiz').style.display = 'none';
+  document.getElementById('screenResult').style.display = 'block';
+
+  document.getElementById('scoreBadge').style.background = bg;
+  document.getElementById('scoreBadge').style.color = color;
+  document.getElementById('scoreNum').textContent = notaFmt;
+  const lbl = document.getElementById('resultLabel');
+  lbl.textContent = resultado;
+  lbl.style.background = bg;
+  lbl.style.color = color;
+  document.getElementById('statCorrect').textContent = corretas;
+  document.getElementById('statIncorrect').textContent = incorretas;
+  document.getElementById('statTotal').textContent = total;
+
+  enviarResposta({
+    nome: document.getElementById('inpNome').value.trim(),
+    email: document.getElementById('inpEmail').value.trim(),
+    nota: notaFmt,
+    resultado,
+    corretas,
+    incorretas,
+    total,
+    detalhes: detalhes.join(' | ')
+  });
 }
-function carregarEdicao() {
-  const i = parseInt(document.getElementById("sel-pergunta").value);
-  const p = perguntas[i];
-  document.getElementById("ed-enunciado").value = p.enunciado;
-  document.getElementById("ed-a").value         = p.opcoes[0].texto;
-  document.getElementById("ed-b").value         = p.opcoes[1].texto;
-  document.getElementById("ed-c").value         = p.opcoes[2].texto;
-  document.getElementById("ed-d").value         = p.opcoes[3].texto;
-  document.getElementById("ed-correta").value   = p.correta;
-  document.getElementById("ed-feedback").value  = p.feedback;
+
+function enviarResposta(dados){
+  const fd = new FormData();
+  fd.append(CONFIG.formEntries.dataHora, new Date().toLocaleString('pt-BR'));
+  fd.append(CONFIG.formEntries.avaliacao, CONFIG.avaliacaoNome);
+  fd.append(CONFIG.formEntries.nome, dados.nome);
+  fd.append(CONFIG.formEntries.email, dados.email);
+  fd.append(CONFIG.formEntries.nota, dados.nota);
+  fd.append(CONFIG.formEntries.resultado, dados.resultado);
+  fd.append(CONFIG.formEntries.corretas, dados.corretas);
+  fd.append(CONFIG.formEntries.incorretas, dados.incorretas);
+  fd.append(CONFIG.formEntries.total, dados.total);
+  fd.append(CONFIG.formEntries.respostasDetalhadas, dados.detalhes);
+
+  fetch(CONFIG.formActionUrl, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: fd
+  }).catch(() => { /* no-cors não permite ler o resultado */ });
 }
-function salvarEdicao() {
-  const i = parseInt(document.getElementById("sel-pergunta").value);
-  perguntas[i].enunciado  = document.getElementById("ed-enunciado").value;
-  perguntas[i].opcoes[0].texto = document.getElementById("ed-a").value;
-  perguntas[i].opcoes[1].texto = document.getElementById("ed-b").value;
-  perguntas[i].opcoes[2].texto = document.getElementById("ed-c").value;
-  perguntas[i].opcoes[3].texto = document.getElementById("ed-d").value;
-  perguntas[i].correta    = document.getElementById("ed-correta").value.toLowerCase();
-  perguntas[i].feedback   = document.getElementById("ed-feedback").value;
-  alert("✅ Pregunta guardada.");
-  popularSelectEditor();
-}
-function exportarJSON() {
-  const blob = new Blob([JSON.stringify(perguntas, null, 2)], {type:"application/json"});
-  const a    = document.createElement("a");
-  a.href     = URL.createObjectURL(blob);
-  a.download = "perguntas-pagos-off-hsp.json";
-  a.click();
+
+document.getElementById('editorBtn').addEventListener('click', () => {
+  if(!editorMode){
+    const pin = prompt('Digite o PIN do Modo Editor:');
+    if(pin !== CONFIG.editorPin){
+      if(pin !== null) alert('PIN incorreto.');
+      return;
+    }
+  } else {
+    saveEdits();
+  }
+  editorMode = !editorMode;
+  document.getElementById('editorBar').style.display = editorMode ? 'block' : 'none';
+
+  if(editorMode){
+    document.getElementById('screenId').style.display = 'none';
+    document.getElementById('screenResult').style.display = 'none';
+    document.getElementById('screenQuiz').style.display = 'block';
+  }
+
+  renderQuestion();
+});
+
+document.getElementById('btnExport').addEventListener('click', () => {
+  saveEdits();
+  document.getElementById('exportText').value = 'questions: ' + JSON.stringify(CONFIG.questions, null, 2);
+  document.getElementById('exportModal').style.display = 'flex';
+});
+
+document.getElementById('btnCopyExport').addEventListener('click', () => {
+  const ta = document.getElementById('exportText');
+  ta.select();
+  if(navigator.clipboard){ navigator.clipboard.writeText(ta.value); }
+  else { document.execCommand('copy'); }
+});
+
+document.getElementById('btnCloseExport').addEventListener('click', () => {
+  document.getElementById('exportModal').style.display = 'none';
+});
+
+function saveEdits(){
+  if(!editorMode) return;
+  const q = CONFIG.questions[currentQ];
+  q.q = document.getElementById('qTitle').textContent.trim();
+  document.querySelectorAll('.opt-text').forEach((el, idx) => {
+    q.options[idx] = el.textContent.trim();
+  });
 }
 </script>
+
+<div id="exportModal">
+  <div class="modal-box">
+    <h3 style="margin-bottom:6px; font-size:16px;">Copie o código abaixo</h3>
+    <p style="font-size:13px; color:var(--text2); margin-bottom:14px;">Cole substituindo o bloco "questions: [ ... ]" dentro do CONFIG, no arquivo .html do repositório.</p>
+    <textarea id="exportText" readonly></textarea>
+    <div style="display:flex; gap:10px; margin-top:14px;">
+      <button id="btnCopyExport" class="btn" style="width:auto;">Copiar</button>
+      <button id="btnCloseExport" class="btn-outline" style="width:auto;">Fechar</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
