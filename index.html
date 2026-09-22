@@ -1,121 +1,113 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Avaliações — FOS LATAM</title>
+<title>Avaliações - MP Operações</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(135deg, #009ee3 0%, #006fb4 100%);
-    min-height: 100vh;
-  }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-  .topo {
-    text-align: center; padding: 56px 20px 36px; color: #fff;
+  :root{
+    --blue:#009EE3; --blue-dark:#007BB5; --blue-light:#E8F7FD; --navy:#003D5C;
+    --bg:#F0F9FF; --text:#1A1A2E; --text2:#6B7280; --border:#E0E7EF;
   }
-  .topo .logo { font-size: 2.6rem; margin-bottom: 6px; }
-  .topo h1 { font-size: 1.7rem; margin-bottom: 6px; }
-  .topo p  { opacity: .88; font-size: .95rem; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding-top:88px;
+    min-height:100vh;
+  }
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    height:72px;
+    background:linear-gradient(135deg,var(--blue) 0%,var(--navy) 100%);
+    display:flex; align-items:center;
+    padding:0 24px;
+    box-shadow:0 2px 12px rgba(0,61,92,.25);
+  }
+  .header-left{display:flex; align-items:center; gap:14px;}
+  .logo-circle{
+    width:44px; height:44px; border-radius:50%;
+    background:#fff; display:flex; align-items:center; justify-content:center;
+    font-size:22px; flex-shrink:0;
+  }
+  .header-titles h1{color:#fff; font-size:16px; font-weight:700; line-height:1.2;}
+  .header-titles p{color:#DCEFFB; font-size:12px; font-weight:500;}
 
-  .container {
-    max-width: 920px; margin: 0 auto; padding: 0 20px 60px;
-  }
+  .wrap{max-width:1000px; margin:0 auto; padding:36px 20px 60px;}
+  .wrap h2{font-size:22px; margin-bottom:6px;}
+  .wrap > p{color:var(--text2); font-size:14px; margin-bottom:28px;}
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+    gap:20px;
   }
-
-  .card {
-    background: #fff; border-radius: 14px; padding: 26px 24px;
-    box-shadow: 0 6px 20px rgba(0,0,0,.12);
-    text-decoration: none; color: inherit;
-    display: flex; flex-direction: column; gap: 10px;
-    transition: transform .18s, box-shadow .18s;
-    position: relative;
-    overflow: hidden;
+  .card{
+    background:#fff; border-radius:14px;
+    box-shadow:0 4px 24px rgba(0,158,227,.10);
+    padding:26px 22px;
+    text-decoration:none;
+    color:var(--text);
+    display:block;
+    transition:transform .15s, box-shadow .15s;
   }
-  .card::before {
-    content: ""; position: absolute; top:0; left:0; right:0; height: 4px;
-    background: #009ee3;
+  .card:hover{transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,158,227,.18);}
+  .card .icon{
+    width:52px; height:52px; border-radius:12px; background:var(--blue-light);
+    display:flex; align-items:center; justify-content:center; font-size:26px; margin-bottom:16px;
   }
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 28px rgba(0,0,0,.18);
-  }
-
-  .card .icone {
-    font-size: 1.8rem; width: 48px; height: 48px;
-    background: #eaf7ff; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .card h3 { font-size: 1.05rem; color: #222; margin-top: 4px; }
-  .card p  { font-size: .85rem; color: #666; line-height: 1.4; }
-  .card .tag {
-    display: inline-block; margin-top: auto; font-size: .78rem;
-    font-weight: 700; color: #009ee3; letter-spacing: .03em;
-  }
-  .card .tag::after { content: " →"; }
-
-  .rodape {
-    text-align: center; color: rgba(255,255,255,.75);
-    font-size: .8rem; padding: 10px 20px 30px;
-  }
+  .card h3{font-size:16px; font-weight:700; margin-bottom:6px;}
+  .card p{font-size:13px; color:var(--text2); line-height:1.4;}
 </style>
 </head>
 <body>
 
-<div class="topo">
-  <div class="logo">🏦</div>
-  <h1>Mercado Pago · FOS LATAM</h1>
-  <p>Selecciona la evaluación que deseas realizar</p>
-</div>
+<header>
+  <div class="header-left">
+    <div class="logo-circle">📋</div>
+    <div class="header-titles">
+      <h1>Avaliações</h1>
+      <p>MP Operações</p>
+    </div>
+  </div>
+</header>
 
-<div class="container">
+<div class="wrap">
+  <h2>Selecione uma avaliação</h2>
+  <p>Escolha o tema que deseja avaliar.</p>
+
   <div class="grid">
-
-    <a class="card" href="single-player.html">
-      <div class="icone">🎮</div>
-      <h3>Single Player HSP</h3>
-      <p>Evaluación sobre el flujo Single Player en HSP.</p>
-      <span class="tag">Comenzar</span>
+    <a class="card" href="single-player-mlb.html">
+      <div class="icon">🕹️</div>
+      <h3>Single Player - MLB</h3>
+      <p>Fluxo, estados de pagamento, Cx One, Admin SP e Simetrik.</p>
     </a>
-
-    <a class="card" href="intereses.html">
-      <div class="icone">💳</div>
-      <h3>Reembolso de Intereses — Tarjeta MP</h3>
-      <p>Evaluación sobre reembolsos de intereses de la Tarjeta Mercado Pago.</p>
-      <span class="tag">Comenzar</span>
+    <a class="card" href="devolucao-juros-mlb.html">
+      <div class="icon">💳</div>
+      <h3>Devolução Juros Cartão MP</h3>
+      <p>Admin Credits, ajustes de bonificação, Creliq e casos de Cobrança.</p>
     </a>
-
-    <a class="card" href="pagos-off-hsp.html">
-      <div class="icone">💰</div>
-      <h3>Pagos OFF — HSP</h3>
-      <p>Evaluación sobre gestión de Pagos OFF, Cash In, PAF y conciliaciones.</p>
-      <span class="tag">Comenzar</span>
+    <a class="card" href="pagtos-off-mlb.html">
+      <div class="icon">🧾</div>
+      <h3>Pagamentos OFF Boleto/PEC</h3>
+      <p>Fondeo, comprovantes, pagamento cruzado e devolução de boleto.</p>
     </a>
-
-    <a class="card" href="pagos-on-tc-td.html">
-      <div class="icone">🏧</div>
-      <h3>Pagos ON — TC/TD</h3>
-      <p>Evaluación sobre pagos online con Tarjeta de Crédito y Débito.</p>
-      <span class="tag">Comenzar</span>
+    <a class="card" href="refunds-mlb.html">
+      <div class="icon">↩️</div>
+      <h3>Refunds Cartão de Crédito/Débito</h3>
+      <p>Status de devolução, prazos por adquirente, JIRA GCO e regalos.</p>
     </a>
-
-    <a class="card" href="banking-connections-money-in.html">
-      <div class="icone">🔗</div>
-      <h3>Banking Connections — Money In</h3>
-      <p>Evaluación sobre conexiones bancarias e ingresos de dinero (Money In).</p>
-      <span class="tag">Comenzar</span>
+    <a class="card" href="pix-mlb.html">
+      <div class="icon">⚡</div>
+      <h3>Processos PIX</h3>
+      <p>Money In/Out, chaves PIX, devolução e retirada.</p>
     </a>
-
+    <!-- Novas avaliações: adicione um novo <a class="card"> aqui -->
   </div>
 </div>
-
-<div class="rodape">FOS · LATAM 2024 — Plataforma de Avaliações</div>
 
 </body>
 </html>
