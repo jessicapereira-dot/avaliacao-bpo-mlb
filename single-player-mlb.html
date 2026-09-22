@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avaliação - Single Player MLB</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root{
+    --blue:#009EE3; --blue-dark:#007BB5; --blue-light:#E8F7FD; --navy:#003D5C;
+    --green:#00A650; --green-bg:#E6F7EF;
+    --red:#F23D4F; --red-bg:#FDEEF0;
+    --yellow:#F59E0B; --yellow-bg:#FFF8E1;
+    --bg:#F0F9FF; --text:#1A1A2E; --text2:#6B7280; --border:#E0E7EF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding-top:88px;
+    min-height:100vh;
+  }
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    height:72px;
+    background:linear-gradient(135deg,var(--blue) 0%,var(--navy) 100%);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 24px;
+    box-shadow:0 2px 12px rgba(0,61,92,.25);
+  }
+  .header-left{display:flex; align-items:center; gap:14px;}
+  .logo-circle{
+    width:44px; height:44px; border-radius:50%;
+    background:#fff; display:flex; align-items:center; justify-content:center;
+    font-size:22px; flex-shrink:0;
+  }
+  .header-titles h1{color:#fff; font-size:16px; font-weight:700; line-height:1.2;}
+  .header-titles p{color:#DCEFFB; font-size:12px; font-weight:500;}
+  #editorBtn{
+    background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.35);
+    padding:8px 14px; border-radius:10px; font-family:'Inter',sans-serif; font-size:13px;
+    font-weight:600; cursor:pointer; white-space:nowrap;
+  }
+  #editorBtn:hover{background:rgba(255,255,255,.25);}
+
+  .wrap{max-width:860px; margin:0 auto; padding:32px 20px 60px;}
+
+  .card{
+    background:#fff; border-radius:14px;
+    box-shadow:0 4px 24px rgba(0,158,227,.10);
+    padding:36px 32px;
+  }
+
+  /* Tela de identificação */
+  #screenId .card{max-width:480px; margin:40px auto 0;}
+  #screenId h2{font-size:22px; margin-bottom:6px;}
+  #screenId p{color:var(--text2); font-size:14px; margin-bottom:24px;}
+  .field{margin-bottom:18px;}
+  .field label{display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:var(--text);}
+  .field input{
+    width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:10px;
+    font-family:'Inter',sans-serif; font-size:14px; background:#F9FBFC;
+  }
+  .field input:focus{outline:none; border-color:var(--blue); background:#fff;}
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    background:var(--blue); color:#fff; border:none; padding:13px 26px;
+    border-radius:10px; font-family:'Inter',sans-serif; font-size:15px; font-weight:700;
+    cursor:pointer; width:100%; transition:background .15s;
+  }
+  .btn:hover{background:var(--blue-dark);}
+  .btn:disabled{background:#B9C4CC; cursor:not-allowed;}
+  .btn-outline{
+    background:#fff; color:var(--blue); border:1.5px solid var(--blue);
+  }
+  .btn-outline:hover{background:var(--blue-light);}
+
+  /* Tela de quiz */
+  #screenQuiz{display:none;}
+  .progress-bar{
+    height:8px; background:var(--border); border-radius:6px; overflow:hidden; margin-bottom:22px;
+  }
+  .progress-fill{height:100%; background:var(--blue); border-radius:6px; transition:width .3s;}
+  .q-meta{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .q-meta span{font-size:13px; font-weight:600; color:var(--text2);}
+  .q-title{font-size:18px; font-weight:700; margin-bottom:22px; line-height:1.4;}
+
+  .option{
+    background:#F5F5F5; border:1.5px solid transparent; border-radius:12px;
+    padding:14px 16px; margin-bottom:12px; cursor:pointer;
+    font-size:14.5px; font-weight:500; transition:.15s;
+    display:flex; align-items:center; gap:12px;
+  }
+  .option:hover{background:#EFEFEF;}
+  .option.selected{background:var(--blue-light); border-color:var(--blue); font-weight:600;}
+  .option .dot{
+    width:18px; height:18px; border-radius:50%; border:2px solid #C7CDD3; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .option.selected .dot{border-color:var(--blue); background:var(--blue);}
+  .option.selected .dot::after{content:''; width:8px; height:8px; border-radius:50%; background:#fff;}
+
+  .quiz-actions{display:flex; justify-content:flex-end; margin-top:28px;}
+  .quiz-actions .btn{width:auto; padding:13px 30px;}
+
+  /* Tela de resultado */
+  #screenResult{display:none;}
+  #screenResult .card{text-align:center;}
+  .score-badge{
+    width:120px; height:120px; border-radius:50%; margin:0 auto 20px;
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    font-weight:800;
+  }
+  .score-badge .num{font-size:34px; line-height:1;}
+  .score-badge .den{font-size:13px; opacity:.8;}
+  .result-label{
+    display:inline-block; padding:8px 18px; border-radius:20px; font-weight:700; font-size:14px;
+    margin-bottom:22px;
+  }
+  .stats{display:flex; justify-content:center; gap:28px; margin:22px 0 30px; flex-wrap:wrap;}
+  .stat{text-align:center;}
+  .stat .n{font-size:24px; font-weight:800;}
+  .stat .l{font-size:12px; color:var(--text2); font-weight:600; text-transform:uppercase; letter-spacing:.03em;}
+  #screenResult .btn{max-width:280px; margin:0 auto;}
+
+  /* Modo editor */
+  .editable{outline:1px dashed var(--blue); outline-offset:2px; border-radius:4px; cursor:text;}
+  #editorBar{
+    display:none; background:var(--yellow-bg); border:1px solid var(--yellow);
+    color:#7A5200; padding:10px 16px; border-radius:10px; font-size:13px; font-weight:600;
+    margin-bottom:18px; text-align:center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="logo-circle">🕹️</div>
+    <div class="header-titles">
+      <h1>Avaliação - Single Player</h1>
+      <p>MLB · FOS MP Operações</p>
+    </div>
+  </div>
+  <button id="editorBtn">⚙️ Modo Editor</button>
+</header>
+
+<!-- TELA DE IDENTIFICAÇÃO -->
+<div id="screenId" class="wrap">
+  <div class="card">
+    <h2>Antes de começar</h2>
+    <p>Preencha seus dados para iniciarmos a avaliação.</p>
+    <div class="field">
+      <label for="inpNome">Nome completo</label>
+      <input type="text" id="inpNome" placeholder="Digite seu nome">
+    </div>
+    <div class="field">
+      <label for="inpEmail">E-mail</label>
+      <input type="email" id="inpEmail" placeholder="seuemail@empresa.com">
+    </div>
+    <button class="btn" id="btnStart">Iniciar Avaliação →</button>
+  </div>
+</div>
+
+<!-- TELA DE QUIZ -->
+<div id="screenQuiz" class="wrap">
+  <div id="editorBar">Modo Editor ativo — clique em uma pergunta ou opção para editar o texto.</div>
+  <div class="card">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="q-meta">
+      <span id="qCounter">Pergunta 1 de 15</span>
+    </div>
+    <div class="q-title" id="qTitle"></div>
+    <div id="qOptions"></div>
+    <div class="quiz-actions">
+      <button class="btn" id="btnNext" disabled>Próximo →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TELA DE RESULTADO -->
+<div id="screenResult" class="wrap">
+  <div class="card">
+    <div class="score-badge" id="scoreBadge">
+      <div class="num" id="scoreNum">0.0</div>
+      <div class="den">/ 10</div>
+    </div>
+    <div class="result-label" id="resultLabel">—</div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="statCorrect" style="color:var(--green)">0</div><div class="l">Corretas</div></div>
+      <div class="stat"><div class="n" id="statIncorrect" style="color:var(--red)">0</div><div class="l">Incorretas</div></div>
+      <div class="stat"><div class="n" id="statTotal">0</div><div class="l">Total</div></div>
+    </div>
+    <a href="index.html" class="btn btn-outline" style="text-decoration:none; display:inline-flex;">🏠 Voltar ao início</a>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   CONFIGURAÇÃO DA AVALIAÇÃO
+   ========================================================= */
+const CONFIG = {
+  avaliacaoNome: "Single Player - MLB",
+
+  formActionUrl: "https://docs.google.com/forms/u/0/d/e/1FAIpQLSfPhCyKWzRRf1PxE-MO6qxmv436UxZfBAmVe7WY0tmY0_YCGg/formResponse",
+
+  formEntries: {
+    dataHora:            "entry.2017782703",
+    avaliacao:           "entry.78177913",
+    nome:                "entry.1818530692",
+    email:               "entry.1056222960",
+    nota:                "entry.48293095",
+    resultado:           "entry.381965002",
+    corretas:            "entry.144582871",
+    incorretas:          "entry.1335730000",
+    total:               "entry.891321817",
+    respostasDetalhadas: "entry.407031098"
+  },
+
+  editorPin: "1234",
+
+  questions: [
+    {
+      q: "O que caracteriza uma operação Single Player?",
+      options: [
+        "Operações de autosserviço de vendas dentro do aplicativo do Mercado Pago, sem necessidade de intermediador ou vendedor",
+        "Vendas realizadas exclusivamente por um vendedor físico",
+        "Transações que exigem aprovação manual de um caixa",
+        "Pagamentos processados apenas fora do aplicativo"
+      ],
+      correct: 0
+    },
+    {
+      q: "Quais produtos fazem parte do fluxo geral do Single Player?",
+      options: [
+        "Recarga de celular, produtos digitais, pagamento de serviços, recarga de antena e recarga de cartão de transporte",
+        "Somente recarga de celular e produtos digitais",
+        "Apenas pagamentos de boletos bancários",
+        "Exclusivamente recargas de antena"
+      ],
+      correct: 0
+    },
+    {
+      q: "No fluxo de prazos do Single Player, quando o pagamento (D) é considerado 'Pagamento Conciliado'?",
+      options: [
+        "No mesmo dia (D)",
+        "D+1",
+        "D+7",
+        "D+30"
+      ],
+      correct: 1
+    },
+    {
+      q: "Depois de conciliado, em quanto tempo o pagamento passa a ser considerado 'Acreditado'?",
+      options: [
+        "Imediatamente",
+        "24 horas",
+        "48 horas",
+        "6 horas"
+      ],
+      correct: 3
+    },
+    {
+      q: "No status 'Pendente/Pending' do Admin Single Player, o que acontece com o dinheiro?",
+      options: [
+        "Dinheiro devolvido",
+        "Dinheiro retido",
+        "Dinheiro liberado",
+        "Dinheiro creditado ao provedor"
+      ],
+      correct: 1
+    },
+    {
+      q: "Um pagamento está 'Aprovado em One Source', 'Inconsistente no Admin SP' e NÃO está liquidado no Simetrik. Qual ação deve ser tomada?",
+      options: [
+        "CANCELAR",
+        "CAPTURAR",
+        "REFUND",
+        "Nenhuma ação, aguardar"
+      ],
+      correct: 2
+    },
+    {
+      q: "Um pagamento está 'Pendente em One Source', 'Inconsistente no Admin SP' e ESTÁ liquidado no Simetrik. Qual ação deve ser tomada?",
+      options: [
+        "CAPTURAR",
+        "CANCELAR",
+        "REFUND",
+        "Encaminhar para Terceros"
+      ],
+      correct: 0
+    },
+    {
+      q: "O que é a ferramenta Cx One?",
+      options: [
+        "Sistema de conciliação bancária",
+        "Ferramenta pela qual recebemos um caso de Atendimento ao Cliente e fornecemos a resposta",
+        "Plataforma de emissão de boletos",
+        "Ferramenta de gestão de estoque"
+      ],
+      correct: 1
+    },
+    {
+      q: "Qual role/perfil deve ser solicitado para operar o Admin de Single Player?",
+      options: [
+        "Admin Global - Full Access",
+        "Perfil de Desenvolvedor - Read Only",
+        "Admin Nuevo Mundo - Asignación de roles MP - ADMIN_SP_WRITE & SINGLEPLAYER - SINGLEPLAYER-ADMIN_SP_READ",
+        "Usuário Financeiro - Aprovador"
+      ],
+      correct: 2
+    },
+    {
+      q: "Onde buscamos uma operação individual no Admin Single Player?",
+      options: [
+        "Transações > Vista Massiva",
+        "Transações > Vista Rápida",
+        "Relatórios > Exportar",
+        "Configurações > Usuários"
+      ],
+      correct: 1
+    },
+    {
+      q: "Onde buscamos e executamos ações em várias operações ao mesmo tempo no Admin Single Player?",
+      options: [
+        "Transações > Vista Rápida",
+        "Backlog > Gdoc",
+        "Simetrik > Gestão Transacional",
+        "Transações > Vista Massiva"
+      ],
+      correct: 3
+    },
+    {
+      q: "No Simetrik (SMKT V2), o que significa o TX_REC_STATUS 'Reconciled'?",
+      options: [
+        "A devolução pode ocorrer normalmente",
+        "Não se deve devolver o pagamento; responder com o Script 04",
+        "Encaminhar o caso para o time interno",
+        "O pagamento deve ser cancelado imediatamente"
+      ],
+      correct: 1
+    },
+    {
+      q: "No Simetrik (SMKT V2), quando o TX_REC_STATUS aparece como 'null/em branco', qual é a ação correta?",
+      options: [
+        "Aplicar refund automaticamente",
+        "Aprovar o pagamento sem análise",
+        "Encaminhar o caso para os internos responsáveis (ex: Jéssica Pereira / Gleice)",
+        "Fechar o caso sem resposta"
+      ],
+      correct: 2
+    },
+    {
+      q: "O que é o 'Transaction Intent'?",
+      options: [
+        "Um tipo de cartão de crédito exclusivo do Mercado Pago",
+        "Uma máscara de pagamento por trás da transação, identificada por um código alfanumérico, usada quando não é possível localizar o payment normalmente",
+        "Um relatório financeiro mensal",
+        "Um status de pagamento cancelado"
+      ],
+      correct: 1
+    },
+    {
+      q: "Em caso de pagamento duplicado, quando ambos os pagamentos estão 'Approved' e 'Provider Approved', qual é a ação correta?",
+      options: [
+        "Cancelar ambos os pagamentos",
+        "Capturar ambos os pagamentos",
+        "Realizar a devolução de um dos pagamentos",
+        "Não realizar nenhuma ação"
+      ],
+      correct: 2
+    }
+  ]
+};
+
+/* =========================================================
+   ESTADO
+   ========================================================= */
+let currentQ = 0;
+let selectedOption = null;
+const answers = new Array(CONFIG.questions.length).fill(null);
+let editorMode = false;
+
+/* =========================================================
+   TELA DE IDENTIFICAÇÃO
+   ========================================================= */
+document.getElementById('btnStart').addEventListener('click', () => {
+  const nome = document.getElementById('inpNome').value.trim();
+  const email = document.getElementById('inpEmail').value.trim();
+  if(!nome || !email){
+    alert('Por favor, preencha nome e e-mail para continuar.');
+    return;
+  }
+  document.getElementById('screenId').style.display = 'none';
+  document.getElementById('screenQuiz').style.display = 'block';
+  renderQuestion();
+});
+
+/* =========================================================
+   TELA DE QUIZ
+   ========================================================= */
+function renderQuestion(){
+  const total = CONFIG.questions.length;
+  const q = CONFIG.questions[currentQ];
+
+  document.getElementById('progressFill').style.width = ((currentQ)/total*100) + '%';
+  document.getElementById('qCounter').textContent = `Pergunta ${currentQ+1} de ${total}`;
+  document.getElementById('qTitle').textContent = q.q;
+  if(editorMode) document.getElementById('qTitle').classList.add('editable');
+
+  const optsDiv = document.getElementById('qOptions');
+  optsDiv.innerHTML = '';
+  selectedOption = null;
+
+  q.options.forEach((optText, idx) => {
+    const el = document.createElement('div');
+    el.className = 'option';
+    el.innerHTML = `<div class="dot"></div><div class="opt-text${editorMode ? ' editable' : ''}">${optText}</div>`;
+    el.addEventListener('click', (e) => {
+      if(editorMode && e.target.classList.contains('opt-text')) return;
+      document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedOption = idx;
+      document.getElementById('btnNext').disabled = false;
+    });
+    optsDiv.appendChild(el);
+  });
+
+  document.getElementById('btnNext').disabled = true;
+  document.getElementById('btnNext').textContent = (currentQ === total - 1) ? 'Finalizar →' : 'Próximo →';
+}
+
+document.getElementById('btnNext').addEventListener('click', () => {
+  if(selectedOption === null) return;
+  answers[currentQ] = selectedOption;
+
+  if(currentQ < CONFIG.questions.length - 1){
+    currentQ++;
+    renderQuestion();
+  } else {
+    finishQuiz();
+  }
+});
+
+/* =========================================================
+   RESULTADO
+   ========================================================= */
+function finishQuiz(){
+  const total = CONFIG.questions.length;
+  let corretas = 0;
+  const detalhes = [];
+
+  CONFIG.questions.forEach((q, i) => {
+    const acertou = answers[i] === q.correct;
+    if(acertou) corretas++;
+    detalhes.push(`P${i+1}: ${acertou ? 'Correta' : 'Incorreta'}`);
+  });
+
+  const incorretas = total - corretas;
+  const nota = (corretas / total * 10);
+  const notaFmt = nota.toFixed(1);
+
+  let resultado, color, bg;
+  if(nota < 7.0){ resultado = 'Reforço/Nivelamento'; color = 'var(--red)'; bg = 'var(--red-bg)'; }
+  else if(nota === 7.0){ resultado = 'Em Aprendizado'; color = 'var(--yellow)'; bg = 'var(--yellow-bg)'; }
+  else { resultado = 'Aprendizado Superado'; color = 'var(--green)'; bg = 'var(--green-bg)'; }
+
+  document.getElementById('screenQuiz').style.display = 'none';
+  document.getElementById('screenResult').style.display = 'block';
+
+  document.getElementById('progressFill') && (document.getElementById('progressFill').style.width = '100%');
+  document.getElementById('scoreBadge').style.background = bg;
+  document.getElementById('scoreBadge').style.color = color;
+  document.getElementById('scoreNum').textContent = notaFmt;
+  const lbl = document.getElementById('resultLabel');
+  lbl.textContent = resultado;
+  lbl.style.background = bg;
+  lbl.style.color = color;
+  document.getElementById('statCorrect').textContent = corretas;
+  document.getElementById('statIncorrect').textContent = incorretas;
+  document.getElementById('statTotal').textContent = total;
+
+  enviarResposta({
+    nome: document.getElementById('inpNome').value.trim(),
+    email: document.getElementById('inpEmail').value.trim(),
+    nota: notaFmt,
+    resultado,
+    corretas,
+    incorretas,
+    total,
+    detalhes: detalhes.join(' | ')
+  });
+}
+
+function enviarResposta(dados){
+  const fd = new FormData();
+  fd.append(CONFIG.formEntries.dataHora, new Date().toLocaleString('pt-BR'));
+  fd.append(CONFIG.formEntries.avaliacao, CONFIG.avaliacaoNome);
+  fd.append(CONFIG.formEntries.nome, dados.nome);
+  fd.append(CONFIG.formEntries.email, dados.email);
+  fd.append(CONFIG.formEntries.nota, dados.nota);
+  fd.append(CONFIG.formEntries.resultado, dados.resultado);
+  fd.append(CONFIG.formEntries.corretas, dados.corretas);
+  fd.append(CONFIG.formEntries.incorretas, dados.incorretas);
+  fd.append(CONFIG.formEntries.total, dados.total);
+  fd.append(CONFIG.formEntries.respostasDetalhadas, dados.detalhes);
+
+  fetch(CONFIG.formActionUrl, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: fd
+  }).catch(() => { /* no-cors não permite ler o resultado */ });
+}
+
+/* =========================================================
+   MODO EDITOR
+   ========================================================= */
+document.getElementById('editorBtn').addEventListener('click', () => {
+  if(!editorMode){
+    const pin = prompt('Digite o PIN do Modo Editor:');
+    if(pin !== CONFIG.editorPin){
+      if(pin !== null) alert('PIN incorreto.');
+      return;
+    }
+  }
+  editorMode = !editorMode;
+  document.getElementById('editorBar').style.display = editorMode ? 'block' : 'none';
+
+  if(document.getElementById('screenQuiz').style.display === 'block'){
+    renderQuestion();
+  }
+
+  if(editorMode){
+    document.querySelectorAll('.editable').forEach(el => el.contentEditable = 'true');
+    document.getElementById('qTitle').addEventListener('blur', saveEdits);
+    document.querySelectorAll('.opt-text').forEach(el => el.addEventListener('blur', saveEdits));
+  }
+});
+
+function saveEdits(){
+  const q = CONFIG.questions[currentQ];
+  q.q = document.getElementById('qTitle').textContent.trim();
+  document.querySelectorAll('.opt-text').forEach((el, idx) => {
+    q.options[idx] = el.textContent.trim();
+  });
+}
+</script>
+
+</body>
+</html>
