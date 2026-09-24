@@ -190,6 +190,7 @@
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
     <div class="q-meta">
       <span id="qCounter">Pergunta 1 de 15</span>
+      <span id="timerDisplay" style="font-weight:800; color:var(--red);"></span>
     </div>
     <div class="q-title" id="qTitle"></div>
     <div id="qOptions"></div>
@@ -236,6 +237,8 @@ const CONFIG = {
   },
 
   editorPin: "1234",
+  lockdownEnabled: true,
+  timeLimitMinutes: 30,
 
   questions: [
     {
@@ -395,6 +398,85 @@ let currentQ = 0;
 let selectedOption = null;
 const answers = new Array(CONFIG.questions.length).fill(null);
 let editorMode = false;
+let quizLocked = false;
+let timerInterval = null;
+let timeRemaining = 0;
+
+/* =========================================================
+   MODO BLOQUEADO (tela cheia + detecção de saída) e TEMPORIZADOR
+   ========================================================= */
+function enterLockdown(){
+  quizLocked = true;
+  const el = document.documentElement;
+  if(el.requestFullscreen){ el.requestFullscreen().catch(() => {}); }
+  document.addEventListener('visibilitychange', handleLockdownBreach);
+  window.addEventListener('blur', handleLockdownBreach);
+  document.addEventListener('fullscreenchange', handleFullscreenChange);
+}
+
+function exitLockdown(){
+  quizLocked = false;
+  document.removeEventListener('visibilitychange', handleLockdownBreach);
+  window.removeEventListener('blur', handleLockdownBreach);
+  document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  if(document.fullscreenElement){ document.exitFullscreen().catch(() => {}); }
+}
+
+function handleLockdownBreach(){
+  if(!quizLocked || editorMode) return;
+  if(document.hidden || !document.hasFocus()){
+    breachDetected();
+  }
+}
+
+function handleFullscreenChange(){
+  if(!quizLocked || editorMode) return;
+  if(!document.fullscreenElement){
+    breachDetected();
+  }
+}
+
+function breachDetected(){
+  if(!quizLocked) return;
+  exitLockdown();
+  if(timerInterval) clearInterval(timerInterval);
+  alert('A avaliação foi reiniciada porque a janela perdeu o foco ou saiu da tela cheia. Não é permitido sair durante a avaliação.');
+  resetQuiz();
+}
+
+function resetQuiz(){
+  currentQ = 0;
+  selectedOption = null;
+  answers.fill(null);
+  document.getElementById('screenQuiz').style.display = 'none';
+  document.getElementById('screenResult').style.display = 'none';
+  document.getElementById('screenId').style.display = 'block';
+  document.getElementById('inpNome').value = '';
+  document.getElementById('inpEmail').value = '';
+}
+
+function startTimer(seconds){
+  timeRemaining = seconds;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    timeRemaining--;
+    updateTimerDisplay();
+    if(timeRemaining <= 0){
+      clearInterval(timerInterval);
+      exitLockdown();
+      alert('Tempo esgotado! Suas respostas serão enviadas automaticamente.');
+      finishQuiz();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay(){
+  const el = document.getElementById('timerDisplay');
+  if(!el) return;
+  const m = Math.floor(timeRemaining / 60);
+  const s = timeRemaining % 60;
+  el.textContent = `⏱ ${m}:${s.toString().padStart(2,'0')}`;
+}
 
 document.getElementById('btnStart').addEventListener('click', () => {
   const nome = document.getElementById('inpNome').value.trim();
@@ -406,6 +488,13 @@ document.getElementById('btnStart').addEventListener('click', () => {
   document.getElementById('screenId').style.display = 'none';
   document.getElementById('screenQuiz').style.display = 'block';
   renderQuestion();
+
+  if(CONFIG.lockdownEnabled){
+    enterLockdown();
+  }
+  if(CONFIG.timeLimitMinutes){
+    startTimer(CONFIG.timeLimitMinutes * 60);
+  }
 });
 
 function renderQuestion(){
@@ -507,6 +596,8 @@ document.getElementById('btnPrev').addEventListener('click', () => {
 });
 
 function finishQuiz(){
+  exitLockdown();
+  if(timerInterval) clearInterval(timerInterval);
   const total = CONFIG.questions.length;
   let corretas = 0;
   const detalhes = [];
@@ -596,7 +687,7 @@ document.getElementById('editorBtn').addEventListener('click', () => {
 
 document.getElementById('btnExport').addEventListener('click', () => {
   saveEdits();
-  document.getElementById('exportText').value = 'questions: ' + JSON.stringify(CONFIG.questions, null, 2);
+  document.getElementById('exportText').value = 'questions: ' + JSON.stringify(CONFIG.questions, null, 2) + '\n};';
   document.getElementById('exportModal').style.display = 'flex';
 });
 
