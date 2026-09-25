@@ -272,17 +272,17 @@ const CONFIG = {
       correct: 1
     },
     {
-      q: "Durante o período de contingência (pós migração ao Workspace), no link de ajuste individual, o que deve ser alterado?",
+      q: "Se há um caso de falecido com dívida, o que é necessário verificar e qual ação tomar?",
       options: [
-        "Apenas a senha de acesso",
-        "Somente o valor do ajuste",
-        "Data do ajuste, siteId (sempre MLB) e o número do cust id do usuário",
-        "Nada, o link já vem pronto"
+        "Realizamos o ajuste total da dívida sem verificações",
+        "Bloqueamos a conta do usuario",
+        "A equipe que derivou o caso/ticket deve enviar o saldo da dívida, e o documento comprobatório do falecimento - com esses, aplicamos o ajuste e cancelamos a conta",
+        "Não atuamos neste caso"
       ],
       correct: 2
     },
     {
-      q: "Na nova tela de Ajustes Financeiros, o que passou a ser obrigatório informar?",
+      q: "Para realizar o ajuste na tela individual, o que é necessário informar?",
       options: [
         "O número do CASO CX ou Jira atrelado ao ajuste",
         "O CPF completo do usuário",
@@ -322,7 +322,7 @@ const CONFIG = {
       correct: 1
     },
     {
-      q: "Quando a fatura tem mais de 90 dias de atraso (Creliq), mesmo aparecendo a mensagem de confirmação em verde, o que ocorre?",
+      q: "Quando a fatura tem mais de 90 dias de atraso (Creliq) sem acordo, mesmo aparecendo a mensagem de confirmação em verde, o que ocorre?",
       options: [
         "O ajuste é aplicado normalmente",
         "O sistema bloqueia automaticamente o ajuste antes de confirmar",
@@ -332,7 +332,7 @@ const CONFIG = {
       correct: 2
     },
     {
-      q: "Se o valor do ajuste for maior que R$ 10.000, o que deve ser feito?",
+      q: "Para alguns casos se o valor do ajuste for maior que R$ 10.000, o que deve ser feito?",
       options: [
         "Recusar o ajuste",
         "Dividir o ajuste em partes (ex: R$19.000 em um ajuste de 10k e outro de 9k)",
@@ -355,7 +355,7 @@ const CONFIG = {
       q: "Se ocorrer um erro no momento de aplicar o ajuste de bonificação, o que se deve fazer?",
       options: [
         "Ignorar o erro e tentar novamente sem registrar nada",
-        "Associar um BUG, abrir um Jira pelo processo 'PROBLEMAS CON TARJETAS EMITIDAS POR MERCADO PAGO' e falar com Jéssica Pereira e Gleiceane Miranda",
+        "Levantar o problema no canal do Slack, com o time de IT Cards",
         "Fechar o caso como resolvido",
         "Aplicar o ajuste manualmente sem registro"
       ],
@@ -382,9 +382,9 @@ const CONFIG = {
       correct: 1
     },
     {
-      q: "Para que serve a query SQL usada na tela 'Contador não zerado' (buscando CCARD_ACCOUNT_PROV_ID, CUS_CUST_ID, CCARD_ACCOUNT_ID)?",
+      q: "Se o contador não foi zerado, mesmo após o acordo de Cobrança, qual ação podemos tomar?",
       options: [
-        "Buscar o CCARD_ACCOUNT necessário para o envio do arquivo massivo",
+        "Enviar o ajuste por massivo, com todos as informações necessárias",
         "Cancelar automaticamente a dívida do usuário",
         "Gerar um novo cartão de crédito",
         "Verificar o histórico de compras do usuário"
