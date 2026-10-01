@@ -1,3 +1,5 @@
+REFUNDS MLB
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -239,7 +241,7 @@ const CONFIG = {
 
   questions: [
     {
-      q: "O que é um 'Refund' no contexto deste manual?",
+      q: "O que é um 'Refund'?",
       options: [
         "Um reembolso gerado quando há necessidade de cancelamento (total ou parcial) de um pagamento feito com cartão de crédito/débito",
         "Um tipo de cartão exclusivo para vendedores",
@@ -252,7 +254,7 @@ const CONFIG = {
       q: "Qual a diferença entre processamento Online e Offline de um Refund?",
       options: [
         "Online é sempre mais lento que Offline",
-        "Online é automático, gerado no momento da solicitação e viaja pelo Gateway até a Processadora; Offline é manual, tratado pela equipe de Refunds via e-mail ou portais",
+        "Online é automático, gerado no momento da solicitação e viaja pelo Gateway até a Processadora; Offline é manual, tratado pela equipe de GCO via e-mail ou portais",
         "Offline só existe para cartões de débito",
         "Não há diferença prática entre os dois"
       ],
@@ -263,7 +265,7 @@ const CONFIG = {
       options: [
         "Data da compra original",
         "Data do primeiro contato do usuário",
-        "Data da criação do Refund (One Source > Refunds > Refunds Gateway)",
+        "Data da criação do Refund (Onetool > Card Transaction > Refunds)",
         "Data de fechamento da fatura"
       ],
       correct: 2
@@ -303,7 +305,7 @@ const CONFIG = {
       options: [
         "A devolução foi processada com êxito e aparece na fatura",
         "A devolução ainda está dentro do prazo, sem necessidade de ação",
-        "A devolução não pôde ser feita pela administradora do cartão, então é feita a entrada de dinheiro ao comprador (aplicar Regalo)",
+        "A devolução não pôde ser feita pela administradora do cartão, então é feita a entrada de dinheiro ao comprador (por cashback)",
         "A devolução foi rejeitada permanentemente"
       ],
       correct: 2
@@ -349,42 +351,42 @@ const CONFIG = {
       correct: 1
     },
     {
-      q: "Para preencher o JIRA GCO (Genova não entra nesse fluxo), qual é a informação sempre preenchida como 'Site'?",
+      q: "Se o refund está not-reconciled/pending e não passou dos 30 dias, o que devemos fazer?",
       options: [
-        "Varia conforme o país do usuário",
-        "BR",
-        "MLB",
+        "Aplicar cashback ao usuario",
+        "Não atuamos em casos not-reconciled/pending",
+        "Contatamos a equipe de TMO por canal slack",
         "Depende do adquirente"
       ],
       correct: 2
     },
     {
-      q: "Quais são os possíveis status de retorno na planilha do Forms de Refunds (para controle Terceros)?",
+      q: "Se temos um pagamento com status approved, e o usuário reclama da não devolução, qual nossa ação?",
       options: [
-        "Apenas 'Aprovado' ou 'Recusado'",
-        "Cancelamento Efetuado, Em verificação com adquirente, Cancelamento não efetuado/Prazo Superior, Aplicar dinheiro em conta e Chargeback",
-        "Somente 'Pendente' e 'Concluído'",
-        "Apenas o valor do reembolso"
+        "Recusamos a tarefa'",
+        "Se já há uma reclamação registrada, e saldo no seller, aplicamos a devolução desde o OneTool",
+        "Aplicamos cashback ao seller'",
+        "Retiramos a restrição do usuário"
       ],
       correct: 1
     },
     {
-      q: "Qual é a função da ferramenta Equals mencionada no manual?",
+      q: "Quando vamos aplicar um cashback, o que deve ser verificado antes?",
       options: [
-        "Um conciliador que reúne todas as informações conciliadas do pagamento do lado do Mercado Pago e do Adquirente",
-        "Uma ferramenta exclusiva para atendimento ao cliente",
-        "Um sistema de emissão de boletos",
-        "Um portal de aprovação de regalos"
+        "Se a conta do user é ativa, se não há nenhum outro cashback já aplicado ao mesmo, e associar ao Refund ID",
+        "Se o refund tem status rejected",
+        "O seller tem valores suficientes no saldo",
+        "Através do Portal do adquirente se existe a transação"
       ],
       correct: 0
     },
     {
-      q: "Em casos de Refund fora do prazo, sem conciliação no Equals e Simetrik, para qual adquirente é possível buscar a carta de cancelamento diretamente por um portal próprio?",
+      q: "Em caso de um pago duplicado, onde existem duas transaçãos (payments IDs) com mesmo valor, mesma data e status approved, devolvemos?",
       options: [
-        "Cielo",
-        "Rede",
-        "Getnet",
-        "Stone"
+        "Não, só podemos devolver se está com status refunded",
+        "A devolução já foi efetuada",
+        "Sim, após a conferência do dois pagamentos, se há evidencias do pagamento em duplicidade, devolvemos um dos pagos",
+        "Sim, pelo portal do adquirente"
       ],
       correct: 2
     }
