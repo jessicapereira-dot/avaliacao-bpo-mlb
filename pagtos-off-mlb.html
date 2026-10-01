@@ -249,7 +249,7 @@ const CONFIG = {
       correct: 1
     },
     {
-      q: "Qual é o prazo de liquidação dos boletos de pagamento do Mercado Livre e dos boletos PEC-Caixa?",
+      q: "Qual é o prazo de liquidação dos boletos de pagamento?",
       options: [
         "Imediato",
         "2 horas ou até o fim do dia",
@@ -269,30 +269,30 @@ const CONFIG = {
       correct: 2
     },
     {
-      q: "Por que a ação de Pagamento Manual não pode mais ser executada, salvo exceções aprovadas pela Vertical de Conciliação?",
+      q: "O comprovante é um documento obrigatório a ser enviado nos casos, o que ele deve conter?",
       options: [
-        "Porque é mais lenta que o Fondeo",
-        "Porque sempre gera uma diferença no contábil",
-        "Porque só funciona para boletos Caixa",
-        "Porque exige aprovação do usuário"
+        "O nome do pagador e da entidade",
+        "Linha digitável, data de pagamento, valor, nome do pagador, nome do beneficiario",
+        "Payment ID",
+        "Valor e data de pagamento"
       ],
       correct: 1
     },
     {
-      q: "Em um boleto cuja linha digitável começa com o nº do banco 341, qual é o código de identificação utilizado?",
+      q: "Com a linha digitável podemos extrair qual informação, importante para nossas validações?",
       options: [
         "Reference ID",
-        "NSU",
+        "NSU e/ou Reference ID",
         "Linha digitável completa",
         "CPF do pagador"
       ],
       correct: 1
     },
     {
-      q: "Pelo One Source, quais são as 3 formas de identificar uma transação de boleto/PEC?",
+      q: "Pelo Onetool, quais são as 4 formas de identificar uma transação de boleto/PEC?",
       options: [
         "Apenas pelo CPF do usuário",
-        "Reference Id, Referência NSU e Referência Pago Off",
+        "Linha Digitável, Reference Id, Referência NSU e Payment ID",
         "Apenas pelo valor da transação",
         "Somente pelo nome do beneficiário"
       ],
@@ -342,49 +342,49 @@ const CONFIG = {
       q: "No caso de Pagamento Cruzado, antes de tomar qualquer ação, o que deve ser feito?",
       options: [
         "Aplicar o fondeo imediatamente",
-        "Consultar a Vertical antes de qualquer ação",
+        "Verificar se o pagador e beneficiário do comprovante são os mesmos do comprovante",
         "Cancelar a conta do usuário que recebeu o valor",
         "Aplicar um Pagamento Manual para corrigir"
       ],
       correct: 1
     },
     {
-      q: "Qual é a diferença principal entre Retenção via Transfer V2 e Retenção via Motor de Deuda?",
+      q: "Se temos um pagamento duplicado por boleto Jp Morgan, qual nossa ação?",
       options: [
         "Não há diferença, são exatamente o mesmo processo",
-        "O Transfer V2 usa 'Crear Processo' com Tipo de Processo Retenção; o Motor de Deuda tem sua própria tela de Processo com Monto de retenção",
-        "O Motor de Deuda só serve para transferências entre contas de mesma titularidade",
-        "O Transfer V2 nunca precisa de aprovação"
+        "Realizamos a consulta via query, e verificamos se há conciliação e esta no admin aplica-se fondeo, se não há conciliação consultamos TMO",
+        "Aplicamos fondeo diretamente",
+        "Realizamos uma transferencia"
       ],
       correct: 1
     },
     {
-      q: "A Transferência via Transfer V2 só é permitida entre quais contas?",
+      q: "Se há um pagamento duplicado, uma consulta que nos ajuda a encontrar esse segundo pagamento pelo Admin Pagos OFF é por?",
       options: [
-        "Contas de qualquer titularidade, sem restrição",
-        "Apenas contas verificadas pelo time de Payers",
-        "Contas de mesma titularidade (mesmo documento CPF/CNPJ)",
-        "Somente contas internas Anonymous"
+        "Payment ID",
+        "Monto/Valor pago",
+        "Cust ID",
+        "Paycash"
       ],
       correct: 2
     },
     {
-      q: "Quais informações o comprovante de pagamento deve conter para a Validação Pré-Fondeo?",
+      q: "Se há uma devolução a uma conta guest e o valor esta acreditado nela, o que fazemos?",
       options: [
-        "Apenas o valor da transação",
-        "Somente o CPF do usuário",
-        "Apenas a linha digitável",
-        "Data da transação, valor, linha digitável, nome do beneficiário, nome do pagador e instituição emissora"
+        "Não atuamos nesta situação",
+        "Fondeamos o pagamento",
+        "Cancelamos o pagamento",
+        "Verificamos se há uma conta ativa do mesmo pagador, e transferimos o valor a esta conta"
       ],
       correct: 3
     },
     {
-      q: "Sobre a devolução (Refund) de boleto, qual regra é válida apenas para boletos Marketplace (não vale para boletos de adição de dinheiro)?",
+      q: "Quais são as entidades financeiras (bancos) que gestionamos?",
       options: [
-        "O usuário pode escolher receber o estorno na conta MP ou em uma conta externa",
-        "O estorno sempre vai para uma conta Anonymous",
-        "O estorno é sempre feito via Pagamento Manual",
-        "O prazo de devolução é sempre de 90 dias"
+        "Bradesco, Safra, Jp Morgan, Itaú",
+        "Nubank, Itaú, Jp Morgan, Caixa Economica",
+        "Caixa Economica, Bradesco, Safra, Jp Morgan, Itaú",
+        "Mercado Pago"
       ],
       correct: 0
     }
