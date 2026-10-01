@@ -1,3 +1,5 @@
+PIX MLB
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -269,7 +271,7 @@ const CONFIG = {
       correct: 0
     },
     {
-      q: "No One Source, ao buscar por Payment ID, o que representa o campo 'Collector'?",
+      q: "No Onetool, ao buscar por Payment ID, o que representa o campo 'Collector'?",
       options: [
         "O valor total da transação",
         "A data de criação do pagamento",
@@ -279,22 +281,22 @@ const CONFIG = {
       correct: 2
     },
     {
-      q: "No processo de 'Forçar acreditação' no Admin de Banking Connections, qual ação deve ser selecionada?",
+      q: "Se uma transação está com status 'refunded-approved' que informação devemos passar ao caso?",
       options: [
-        "Cancelar",
-        "Reprocesar",
-        "Excluir",
-        "Bloquear"
+        "Código E2E",
+        "Código D - Devolução gerado pelo Bacen",
+        "Numero do payment associado",
+        "Comprovante de devolução"
       ],
       correct: 1
     },
     {
-      q: "Após 2 tentativas de forçar acreditação sem sucesso, com status permanecendo em 'Approved Pending' ou 'Created Pending', qual é o próximo passo?",
+      q: "Se o usuário reclama que não vê a devolução, e já enviamos o código D, que devemos fazer?",
       options: [
-        "Continuar tentando indefinidamente",
+        "Aplicar cashback ao usuario",
         "Devolver o caso sem nenhuma ação",
-        "Abrir um Bug, derivando com o motivo 'Problemas con el estado de un pago ya creado'",
-        "Aplicar regalo diretamente ao usuário"
+        "Desde Terceros, se contata com a equipe de BCO por canal de slack com os detalhes do caso'",
+        "Forçar a devolução ao usuario"
       ],
       correct: 2
     },
@@ -329,12 +331,12 @@ const CONFIG = {
       correct: 2
     },
     {
-      q: "No fluxo de Devolução Pix Money In, quando a operação de devolução foi gerada com sucesso e está conciliada, mas o banco não associou o valor à conta do usuário, o que deve ser informado como evidência?",
+      q: "Se na tentativa de realizar transferência PIX a outra conta, aparece a transação como rejected, o que pode ser?",
       options: [
-        "O número do Payment ID apenas",
-        "O CPF do usuário",
-        "O Código de Referência de devolução gerado pelo BACEN",
-        "Um print do aplicativo"
+        "Erro sistêmico
+        "Valor acima do habitual",
+        "O recebedor pode estar com algum bloqueio em conta, ou o próprio user - desde o Onetool temos que tipo de rejeição houve, como por exemplo: "rejected-invalid-account",
+        "A conta não existe"
       ],
       correct: 2
     },
@@ -342,19 +344,19 @@ const CONFIG = {
       q: "No fluxo de Devolução Pix Money Out, se o valor devolvido entrou na conta do usuário e saiu imediatamente em seguida, o que isso pode indicar?",
       options: [
         "Um erro de digitação do usuário",
-        "Que o usuário possui um 'Motor de Dívidas' ativo, sendo necessário verificar no Admin de Transfer qual equipe gerou o 'Recupero'",
+        "Que o usuário possui um 'Motor de Dívidas' ativo, ou que o valor foi acreditado a algum pago associado",
         "Que a devolução nunca foi processada",
         "Que o valor foi duplicado por engano"
       ],
       correct: 1
     },
     {
-      q: "Antes de afirmar que uma falha na retirada (Money Out) é do Mercado Pago, o que deve ser verificado no Simetrik?",
+      q: "Por qual outro caminho no OneTool podemos encontrar o E2E?",
       options: [
-        "O histórico de compras do usuário",
-        "Se a retirada está conciliada; se estiver, o usuário deve reclamar com o próprio banco",
-        "O número de tentativas de login do usuário",
-        "O saldo total da conta"
+        "Busca por Cust ID",
+        "Busca por Payin, utilizando as siglas BCP1_PIX na frente do E2E",
+        "Busca por monto",
+        "Busca pelo Cx One"
       ],
       correct: 1
     },
@@ -379,12 +381,12 @@ const CONFIG = {
       correct: 1
     },
     {
-      q: "Para localizar um pagamento Money In no Admin de Banking Connections usando o E2E, qual é o caminho correto?",
+      q: "Conta ativa, usuário não possui restrição e há uma solicitação de exclusão de chave PIX, o que se deve fazer",
       options: [
-        "Selecionar Money IN, clicar na aba 'Em massa', filtrar por 'ID E2E' e incluir o código",
+        "Se o user possui conta ativa e não tem problemas na conta, o mesmo pode fazer a auto-gestão da exclusão por sua conta MP",
         "Selecionar Money OUT, clicar em 'Transfer' e buscar pelo CPF",
-        "Acessar diretamente o Simetrik sem passar pelo Admin",
-        "Buscar apenas pelo nome do usuário no CX One"
+        "Excluir chaves",
+        "Consultar a BCO"
       ],
       correct: 0
     }
