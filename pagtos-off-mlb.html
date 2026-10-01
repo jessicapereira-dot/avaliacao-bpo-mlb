@@ -190,6 +190,7 @@
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
     <div class="q-meta">
       <span id="qCounter">Pergunta 1 de 15</span>
+      <span id="timerDisplay" style="font-weight:800; color:var(--red);"></span>
     </div>
     <div class="q-title" id="qTitle"></div>
     <div id="qOptions"></div>
@@ -216,6 +217,18 @@
   </div>
 </div>
 
+<div id="exportModal">
+  <div class="modal-box">
+    <h3 style="margin-bottom:6px; font-size:16px;">Copie o código abaixo</h3>
+    <p style="font-size:13px; color:var(--text2); margin-bottom:14px;">Cole substituindo o bloco "questions: [ ... ]" dentro do CONFIG, no arquivo .html do repositório.</p>
+    <textarea id="exportText" readonly></textarea>
+    <div style="display:flex; gap:10px; margin-top:14px;">
+      <button id="btnCopyExport" class="btn" style="width:auto;">Copiar</button>
+      <button id="btnCloseExport" class="btn-outline" style="width:auto;">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const CONFIG = {
   avaliacaoNome: "Pagamentos OFF Boleto/PEC - MLB",
@@ -236,6 +249,8 @@ const CONFIG = {
   },
 
   editorPin: "1234",
+  lockdownEnabled: true,
+  timeLimitMinutes: 30,
 
   questions: [
     {
@@ -395,6 +410,85 @@ let currentQ = 0;
 let selectedOption = null;
 const answers = new Array(CONFIG.questions.length).fill(null);
 let editorMode = false;
+let quizLocked = false;
+let timerInterval = null;
+let timeRemaining = 0;
+
+/* =========================================================
+   MODO BLOQUEADO (tela cheia + detecção de saída) e TEMPORIZADOR
+   ========================================================= */
+function enterLockdown(){
+  quizLocked = true;
+  const el = document.documentElement;
+  if(el.requestFullscreen){ el.requestFullscreen().catch(() => {}); }
+  document.addEventListener('visibilitychange', handleLockdownBreach);
+  window.addEventListener('blur', handleLockdownBreach);
+  document.addEventListener('fullscreenchange', handleFullscreenChange);
+}
+
+function exitLockdown(){
+  quizLocked = false;
+  document.removeEventListener('visibilitychange', handleLockdownBreach);
+  window.removeEventListener('blur', handleLockdownBreach);
+  document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  if(document.fullscreenElement){ document.exitFullscreen().catch(() => {}); }
+}
+
+function handleLockdownBreach(){
+  if(!quizLocked || editorMode) return;
+  if(document.hidden || !document.hasFocus()){
+    breachDetected();
+  }
+}
+
+function handleFullscreenChange(){
+  if(!quizLocked || editorMode) return;
+  if(!document.fullscreenElement){
+    breachDetected();
+  }
+}
+
+function breachDetected(){
+  if(!quizLocked) return;
+  exitLockdown();
+  if(timerInterval) clearInterval(timerInterval);
+  alert('A avaliação foi reiniciada porque a janela perdeu o foco ou saiu da tela cheia. Não é permitido sair durante a avaliação.');
+  resetQuiz();
+}
+
+function resetQuiz(){
+  currentQ = 0;
+  selectedOption = null;
+  answers.fill(null);
+  document.getElementById('screenQuiz').style.display = 'none';
+  document.getElementById('screenResult').style.display = 'none';
+  document.getElementById('screenId').style.display = 'block';
+  document.getElementById('inpNome').value = '';
+  document.getElementById('inpEmail').value = '';
+}
+
+function startTimer(seconds){
+  timeRemaining = seconds;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    timeRemaining--;
+    updateTimerDisplay();
+    if(timeRemaining <= 0){
+      clearInterval(timerInterval);
+      exitLockdown();
+      alert('Tempo esgotado! Suas respostas serão enviadas automaticamente.');
+      finishQuiz();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay(){
+  const el = document.getElementById('timerDisplay');
+  if(!el) return;
+  const m = Math.floor(timeRemaining / 60);
+  const s = timeRemaining % 60;
+  el.textContent = `⏱ ${m}:${s.toString().padStart(2,'0')}`;
+}
 
 document.getElementById('btnStart').addEventListener('click', () => {
   const nome = document.getElementById('inpNome').value.trim();
@@ -406,6 +500,13 @@ document.getElementById('btnStart').addEventListener('click', () => {
   document.getElementById('screenId').style.display = 'none';
   document.getElementById('screenQuiz').style.display = 'block';
   renderQuestion();
+
+  if(CONFIG.lockdownEnabled){
+    enterLockdown();
+  }
+  if(CONFIG.timeLimitMinutes){
+    startTimer(CONFIG.timeLimitMinutes * 60);
+  }
 });
 
 function renderQuestion(){
@@ -507,6 +608,8 @@ document.getElementById('btnPrev').addEventListener('click', () => {
 });
 
 function finishQuiz(){
+  exitLockdown();
+  if(timerInterval) clearInterval(timerInterval);
   const total = CONFIG.questions.length;
   let corretas = 0;
   const detalhes = [];
@@ -596,7 +699,7 @@ document.getElementById('editorBtn').addEventListener('click', () => {
 
 document.getElementById('btnExport').addEventListener('click', () => {
   saveEdits();
-  document.getElementById('exportText').value = 'questions: ' + JSON.stringify(CONFIG.questions, null, 2);
+  document.getElementById('exportText').value = 'questions: ' + JSON.stringify(CONFIG.questions, null, 2) + '\n};';
   document.getElementById('exportModal').style.display = 'flex';
 });
 
@@ -619,19 +722,73 @@ function saveEdits(){
     q.options[idx] = el.textContent.trim();
   });
 }
-</script>
 
-<div id="exportModal">
-  <div class="modal-box">
-    <h3 style="margin-bottom:6px; font-size:16px;">Copie o código abaixo</h3>
-    <p style="font-size:13px; color:var(--text2); margin-bottom:14px;">Cole substituindo o bloco "questions: [ ... ]" dentro do CONFIG, no arquivo .html do repositório.</p>
-    <textarea id="exportText" readonly></textarea>
-    <div style="display:flex; gap:10px; margin-top:14px;">
-      <button id="btnCopyExport" class="btn" style="width:auto;">Copiar</button>
-      <button id="btnCloseExport" class="btn-outline" style="width:auto;">Fechar</button>
-    </div>
-  </div>
-</div>
+/* =========================================================
+   PROTEÇÃO CONTRA INSPEÇÃO (botão direito, atalhos, seleção e DevTools)
+   Para desligar tudo, use lockdownEnabled: false no CONFIG.
+   ========================================================= */
+function protecaoAtiva(){
+  return !editorMode && CONFIG.lockdownEnabled !== false;
+}
+
+function ehCampoDeTexto(target){
+  const el = target && target.nodeType === 1 ? target : (target ? target.parentElement : null);
+  return !!(el && el.closest && el.closest('input, textarea'));
+}
+
+// 1) Bloqueia o botão direito (menu "Inspecionar")
+document.addEventListener('contextmenu', (e) => {
+  if(!protecaoAtiva()) return;
+  e.preventDefault();
+});
+
+// 2) Bloqueia atalhos de DevTools, ver código-fonte, salvar e imprimir
+document.addEventListener('keydown', (e) => {
+  if(!protecaoAtiva()) return;
+  const mod = e.ctrlKey || e.metaKey;
+  const code = e.code;
+  const bloqueado =
+    code === 'F12' ||
+    (mod && e.shiftKey && ['KeyI','KeyJ','KeyC','KeyK'].includes(code)) ||
+    (e.metaKey && e.altKey && ['KeyI','KeyJ','KeyC','KeyU'].includes(code)) ||
+    (mod && ['KeyU','KeyS','KeyP'].includes(code));
+  if(bloqueado){
+    e.preventDefault();
+    e.stopPropagation();
+  }
+}, true);
+
+// 3) Impede selecionar/copiar/arrastar o texto das perguntas (nome e e-mail continuam livres)
+document.addEventListener('selectstart', (e) => {
+  if(!protecaoAtiva() || ehCampoDeTexto(e.target)) return;
+  e.preventDefault();
+});
+document.addEventListener('copy', (e) => {
+  if(!protecaoAtiva() || ehCampoDeTexto(e.target)) return;
+  e.preventDefault();
+});
+document.addEventListener('dragstart', (e) => {
+  if(!protecaoAtiva()) return;
+  e.preventDefault();
+});
+
+// 4) Detecta DevTools aberto durante a avaliação (pausa do 'debugger') e reinicia a tentativa
+function devtoolsDetected(){
+  if(!quizLocked) return;
+  exitLockdown();
+  if(timerInterval) clearInterval(timerInterval);
+  alert('A avaliação foi reiniciada porque foi detectada a abertura das ferramentas do desenvolvedor.');
+  resetQuiz();
+}
+setInterval(() => {
+  if(!quizLocked || editorMode) return;
+  const t0 = performance.now();
+  debugger;
+  if(performance.now() - t0 > 120){
+    devtoolsDetected();
+  }
+}, 1000);
+</script>
 
 </body>
 </html>
